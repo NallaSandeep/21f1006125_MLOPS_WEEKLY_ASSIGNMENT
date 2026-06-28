@@ -27,9 +27,24 @@ Incorporate Data Version Control (DVC) into IRIS machine learning pipeline to cr
 * git commit -m "Initialize DVC"
 * Configure GCP Cloud Storage as remote DVC
   dvc remote add -d storage gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
+  Use 'dvc remote list' for existing remote configuration
 * Create DVC pipeline
   dvc stage add -n train -d week_2_graded_assignment.py -d data/iris.csv -o artifacts/model.joblib -o artifacts/predictions.csv python week_2_graded_assignment.py
 * Run 'dvc repro' to train model and build dvc data and model versions
 * Run 'dvc push' to push data and model version objects to Google cloud storage
 * Run 'git commit' and 'git push' commands to keep the code at remote repository
 * Run 'git tag -a version -m "data with n records"
+
+## Data & Model Version Results
+### version 1
+* IRIS dataset count - 100 records
+* Train accuracy score - 0.925
+* Test accuracy score - 0.96
+### version 2
+* IRIS dataset count - 125 records
+* Train score - 0.94
+* Prediction score - 0.92
+### version 3
+* IRIS dataset count - 150 records
+* Train score - 0.983
+* Prediction score - 0.98
