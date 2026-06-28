@@ -3,7 +3,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import metrics
 import joblib
-from datetime import datetime
 import os
 
 # Read data
@@ -31,14 +30,11 @@ results = X_test.copy()
 results["Actual"] = y_test.values if hasattr(y_test, "values") else y_test
 results["Predicted"] = prediction
 
-# Save to CSV
-results.to_csv("predictions.csv", index=False)
-
-#Export model
-
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
 artifact_dir = f"./artifacts"
 os.makedirs(artifact_dir, exist_ok=True)
 
+# Save to CSV
+results.to_csv(f"{artifact_dir}/predictions.csv", index=False)
+
+#Export model
 joblib.dump(mod_dt, f"{artifact_dir}/model.joblib")
