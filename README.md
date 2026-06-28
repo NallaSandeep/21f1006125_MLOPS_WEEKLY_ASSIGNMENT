@@ -12,7 +12,7 @@ Incorporate Data Version Control (DVC) into IRIS machine learning pipeline to cr
 * Navigate between data versions using DVC checkout.
 
 ## Steps in Google Console
-* Open Cloud Shell
+* Activate Google Cloud Shell
 * Run 'cd mlops/week2/'
 * Run 'git clone https://github.com/21f1006125-ds/21f1006125_MLOPS_WEEKLY_ASSIGNMENT.git'
 * Enter credentials (Username and Password)
@@ -25,7 +25,11 @@ Incorporate Data Version Control (DVC) into IRIS machine learning pipeline to cr
 * Run 'dvc init'
 * git add .dvc .dvcignore
 * git commit -m "Initialize DVC"
-* dvc remote add -d storage gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
-* dvc add artifacts/predictions.csv artifacts/model.joblib
-* git add artifacts/.gitignore artifacts/predictions.csv.dvc artifacts/model.joblib.dvc
-* dvc config core.autostage true
+* Configure GCP Cloud Storage as remote DVC
+  dvc remote add -d storage gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
+* Create DVC pipeline
+  dvc stage add -n train -d week_2_graded_assignment.py -d data/iris.csv -o artifacts/model.joblib -o artifacts/predictions.csv python week_2_graded_assignment.py
+* Run 'dvc repro' to train model and build dvc data and model versions
+* Run 'dvc push' to push data and model version objects to Google cloud storage
+* Run 'git commit' and 'git push' commands to keep the code at remote repository
+* Run 'git tag -a version -m "data with n records"
