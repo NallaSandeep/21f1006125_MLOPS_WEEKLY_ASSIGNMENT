@@ -6,3 +6,4 @@ stages:
     - week_2_graded_assignment.py
     outs:
     - artifacts/model.joblib
+    - artifacts/predictions.csv
