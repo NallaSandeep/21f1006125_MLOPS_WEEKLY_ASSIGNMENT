@@ -24,6 +24,16 @@ mod_dt.fit(X_train,y_train)
 prediction=mod_dt.predict(X_test)
 print('The accuracy of the Decision Tree is',"{:.3f}".format(metrics.accuracy_score(prediction,y_test)))
 
+# Create a DataFrame with test features
+results = X_test.copy()
+
+# Add actual and predicted labels
+results["Actual"] = y_test.values if hasattr(y_test, "values") else y_test
+results["Predicted"] = prediction
+
+# Save to CSV
+results.to_csv("predictions.csv", index=False)
+
 #Export model
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

@@ -16,3 +16,15 @@ Incorporate Data Version Control (DVC) into IRIS machine learning pipeline to cr
 * Run 'cd mlops/week2/'
 * Run 'git clone https://github.com/21f1006125-ds/21f1006125_MLOPS_WEEKLY_ASSIGNMENT.git'
 * Enter credentials (Username and Password)
+* Run 'cd 21f1006125_MLOPS_WEEKLY_ASSIGNMENT/'
+* Run 'python3 -m venv .env'
+* Run 'source .env/bin/activate'
+* Run 'pip install -r requirements.txt'
+* Run 'pip install dvc'
+* pip install dvc-gs
+* Run 'dvc init'
+* git add .dvc .dvcignore
+* git commit -m "Initialize DVC"
+* dvc remote add -d storage gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
+
+
