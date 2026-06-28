@@ -1,0 +1,8 @@
+stages:
+  train:
+    cmd: python week_2_graded_assignment.py
+    deps:
+    - data/iris.csv
+    - week_2_graded_assignment.py
+    outs:
+    - artifacts/model.joblib

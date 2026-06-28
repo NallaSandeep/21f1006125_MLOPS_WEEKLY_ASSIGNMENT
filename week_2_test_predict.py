@@ -6,8 +6,8 @@ model = joblib.load("artifacts/model.joblib")
 
 test = pd.read_csv("data/iris_test.csv")
 
-X_test = test.drop("Species", axis=1)
-y_test = test["Species"]
+X_test = test.drop("species", axis=1)
+y_test = test["species"]
 
 pred = model.predict(X_test)
 
