@@ -1,5 +1,6 @@
 [core]
     remote = storage
+    autostage = true
 ['remote "myremote"']
     url = gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
 ['remote "storage"']
