@@ -26,5 +26,6 @@ Incorporate Data Version Control (DVC) into IRIS machine learning pipeline to cr
 * git add .dvc .dvcignore
 * git commit -m "Initialize DVC"
 * dvc remote add -d storage gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
-
-
+* dvc add artifacts/predictions.csv artifacts/model.joblib
+* git add artifacts/.gitignore artifacts/predictions.csv.dvc artifacts/model.joblib.dvc
+* dvc config core.autostage true
