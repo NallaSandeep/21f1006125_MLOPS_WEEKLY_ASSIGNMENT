@@ -1,0 +1,69 @@
+
+U
+5
+iris"iris_idJ$iris_feature_store_creation_bigquery
+ë˜°ÒøùéÓë˜°ÒøùéÓ
+[
+;
+__dummy"
+__dummy_idJ$iris_feature_store_creation_bigquery
+ë˜°Òà¨İÓë˜°ÒĞ‰÷Ó1"$dd54c687-4fae-4d90-aa50-81093b8f3f15*ë˜°Ò°‚³ç2‹
+ê
+iris_features$iris_feature_store_creation_bigqueryiris"
+sepal_length"
+sepal_width"
+petal_length"
+petal_width"
+
+sepal_area"
+
+petal_area"
+sepal_ratio"
+petal_ratio"
+flower_area"
+petal_to_sepal_ratio*
+datasetiris2€ç„:Éevent_timestamp*created_timestampb8
+6project-eada5958-ab21-4f76-b53.demo_data.iris_featuresŠ9feast.infra.offline_stores.bigquery_source.BigQuerySource¢iris_source’ê˜°Ò îçÁ"ë˜°ÒÀ»ùÒ@b
+iris_id’latest
+ë˜°Òà˜Óë˜°Òà˜Ó:å
+Ä
+iris_feature_service$iris_feature_store_creation_bigquery…
+iris_features
+sepal_length
+sepal_width
+petal_length
+petal_width
+
+sepal_area
+
+petal_area
+sepal_ratio
+petal_ratio
+flower_area
+petal_to_sepal_ratio*created_timestamp:created_timestampBevent_timestamp*created_timestampb8
+6project-eada5958-ab21-4f76-b53.demo_data.iris_features¢iris_source’ê˜°Ò îçÁ"ë˜°ÒÀ»ùÒZfeatureView
+ë˜°Ò òƒÔë˜°Ò òƒÔbğevent_timestamp*created_timestampb8
+6project-eada5958-ab21-4f76-b53.demo_data.iris_featuresŠ9feast.infra.offline_stores.bigquery_source.BigQuerySource¢iris_sourceª$iris_feature_store_creation_bigquery’ê˜°Ò îçÁ"ë˜°ÒÀ»ùÒŠj
+J
+$iris_feature_store_creation_bigquery"Feature store for the IRIS dataset
+ê˜°Ò˜¼ÁÁê˜°Ò˜¼ÁÁ’ˆ
+…
+iris_features$iris_feature_store_creation_bigquery"feature_view*‹
+ê
+iris_features$iris_feature_store_creation_bigqueryiris"
+sepal_length"
+sepal_width"
+petal_length"
+petal_width"
+
+sepal_area"
+
+petal_area"
+sepal_ratio"
+petal_ratio"
+flower_area"
+petal_to_sepal_ratio*
+datasetiris2€ç„:Éevent_timestamp*created_timestampb8
+6project-eada5958-ab21-4f76-b53.demo_data.iris_featuresŠ9feast.infra.offline_stores.bigquery_source.BigQuerySource¢iris_source’ê˜°Ò îçÁ"ë˜°ÒÀ»ùÒ@b
+iris_id’latest
+ë˜°Òà˜Óë˜°Òà˜Ó2ë˜°Òø¯ØÓB$03f6e890-0f69-448f-814c-1fb9863228e7
