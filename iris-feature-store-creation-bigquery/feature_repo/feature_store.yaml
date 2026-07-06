@@ -1,0 +1,19 @@
+project: iris_feature_store_creation_bigquery
+
+registry: data/registry.db
+
+provider: gcp
+
+offline_store:
+  type: bigquery
+  project_id: project-eada5958-ab21-4f76-b53
+  dataset: iris_feature_store
+
+online_store:
+  type: sqlite
+  path: data/online_store.db
+
+entity_key_serialization_version: 3
+
+auth:
+  type: no_auth
