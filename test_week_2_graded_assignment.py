@@ -1,6 +1,6 @@
 import joblib
 
-from train import (
+from week_2_graded_assignment import (
     load_data,
     split_data,
     train_model,
