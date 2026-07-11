@@ -41,7 +41,7 @@ def test_feature_data_types():
     for column in NUMERIC_COLUMNS:
         assert pd.api.types.is_numeric_dtype(data[column])
 
-    assert data["species"].dtype == object
+    assert pd.api.types.is_string_dtype(data["species"])
 
 
 def test_target_classes():
