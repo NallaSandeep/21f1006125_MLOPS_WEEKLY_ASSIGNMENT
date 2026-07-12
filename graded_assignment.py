@@ -54,7 +54,7 @@ def save_artifacts(model, X_test, y_test, predictions, artifact_dir="./artifacts
     joblib.dump(model, f"{artifact_dir}/model.joblib")
 
 def main():
-    data = load_data("./data/iris.csv")
+    data = load_data("./data/iris_test.csv")
 
     X_train, X_test, y_train, y_test = split_data(data)
 

@@ -1,6 +1,6 @@
 import joblib
 
-from week_2_graded_assignment import (
+from graded_assignment import (
     load_data,
     split_data,
     train_model,
@@ -9,7 +9,7 @@ from week_2_graded_assignment import (
 )
 
 
-DATA_PATH = "./data/iris.csv"
+DATA_PATH = "./data/iris_test.csv"
 
 
 def test_load_data():

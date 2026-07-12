@@ -1,6 +1,6 @@
 import pandas as pd
 
-from week_2_graded_assignment import load_data, split_data
+from graded_assignment import load_data, split_data
 
 DATA_PATH = "./data/iris_test.csv"
 

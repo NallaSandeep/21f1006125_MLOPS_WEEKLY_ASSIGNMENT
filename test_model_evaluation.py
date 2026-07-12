@@ -6,7 +6,7 @@ from sklearn.metrics import (
     f1_score,
 )
 
-from week_2_graded_assignment import (
+from graded_assignment import (
     load_data,
     split_data,
     train_model,

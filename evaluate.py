@@ -6,7 +6,7 @@ from sklearn.metrics import (
     f1_score,
 )
 
-from week_2_graded_assignment import load_data, split_data
+from graded_assignment import load_data, split_data
 
 data = load_data("./data/iris_test.csv")
 _, X_test, _, y_test = split_data(data)
