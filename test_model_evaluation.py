@@ -46,7 +46,7 @@ def test_model_accuracy(tmp_path):
 
     accuracy = accuracy_score(y_test, predictions)
 
-    assert accuracy >= 0.90
+    assert accuracy >= 0.97
 
 
 def test_model_precision(tmp_path):
@@ -60,7 +60,7 @@ def test_model_precision(tmp_path):
         average="macro",
     )
 
-    assert precision >= 0.90
+    assert precision >= 0.97
 
 
 def test_model_recall(tmp_path):
@@ -74,7 +74,7 @@ def test_model_recall(tmp_path):
         average="macro",
     )
 
-    assert recall >= 0.90
+    assert recall >= 0.97
 
 
 def test_model_f1_score(tmp_path):
@@ -88,4 +88,4 @@ def test_model_f1_score(tmp_path):
         average="macro",
     )
 
-    assert f1 >= 0.90
+    assert f1 >= 0.97
