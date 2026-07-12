@@ -77,10 +77,10 @@ jobs:
 
           summary = report["summary"]
 
-          print(f"- Passed: {summary['passed']}")
-          print(f"- Failed: {summary['failed']}")
-          print(f"- Errors: {summary['error']}")
-          print(f"- Skipped: {summary['skipped']}")
+          print(f"- Passed: {summary.get('passed', 0)}")
+          print(f"- Failed: {summary.get('failed', 0)}")
+          print(f"- Errors: {summary.get('error', 0)}")
+          print(f"- Skipped: {summary.get('skipped', 0)}")
           EOF
 
           echo "" >> report.md
