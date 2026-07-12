@@ -55,6 +55,7 @@ jobs:
       - name: Run Unit Tests
         run: |
           pytest -v --json-report --json-report-file=test-report.json
+          cat test-report.json
 
       - name: Evaluate Model
         run: |
