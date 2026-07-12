@@ -13,7 +13,7 @@ from graded_assignment import (
     save_artifacts,
 )
 
-DATA_PATH = "./data/iris_test.csv"
+DATA_PATH = "./data/iris.csv"
 
 
 def get_trained_model(tmp_path):

@@ -2,7 +2,7 @@ import pandas as pd
 
 from graded_assignment import load_data, split_data
 
-DATA_PATH = "./data/iris_test.csv"
+DATA_PATH = "./data/iris.csv"
 
 EXPECTED_COLUMNS = [
     "sepal_length",

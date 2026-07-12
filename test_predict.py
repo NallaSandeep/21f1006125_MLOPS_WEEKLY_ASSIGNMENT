@@ -4,7 +4,7 @@ import joblib
 
 model = joblib.load("artifacts/model.joblib")
 
-test = pd.read_csv("data/iris_test.csv")
+test = pd.read_csv("data/iris.csv")
 
 X_test = test.drop("species", axis=1)
 y_test = test["species"]
