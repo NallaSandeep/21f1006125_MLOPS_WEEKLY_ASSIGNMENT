@@ -5,8 +5,8 @@ stages:
     deps:
     - path: data/iris.csv
       hash: md5
-      md5: fe9b483f652508568c564860d36da508
-      size: 2498
+      md5: 9c22f7cf3714d0c194f5f43a6276ca9d
+      size: 3861
     - path: graded_assignment.py
       hash: md5
       md5: b3a7ae0628340b4557492b59f8342f22
@@ -14,9 +14,9 @@ stages:
     outs:
     - path: artifacts/model.joblib
       hash: md5
-      md5: ba901e819826f9a65f5e7ee8b9d7b6e6
+      md5: d94ef906bec389ec316cd0e5a164ac50
       size: 2577
     - path: artifacts/predictions.csv
       hash: md5
-      md5: 22adcaaff4e010d13495f2f7021f820a
-      size: 1454
+      md5: f63efc94dc07727791591acc28059f03
+      size: 2146
