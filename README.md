@@ -1,19 +1,33 @@
-# Integrating DVC into the IRIS Pipeline
+# Integrating CI into the IRIS Pipeline
 
 ## Overview
 
-Incorporate Data Version Control (DVC) into IRIS machine learning pipeline to create a reproducible, version-controlled workflow for both data and model artifacts backed by Google Cloud Storage.
+Add continuous integration to your IRIS pipeline using GitHub Actions — automatically running evaluation tests, fetching versioned data and models via DVC, and reporting results on every push and pull request.
 
 ## Objectives
 
-* Understand how DVC extends Git to handle large files, datasets, and ML models.
-* Configure a cloud-based remote storage backend (GCS) for DVC.
-* Practice versioning data and models across multiple training iterations.
-* Navigate between data versions using DVC checkout.
+* Write Data Validation Tests
+* Write Model Evaluation Tests
+* Configure GitHub Actions with DVC
+* Enable CI on Every Push & PR
+* Merge to Main via Pull Request and validate CML test results as comment to PR
 
-## Steps in Google Console
+## Included Files
+* graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, validates the model using test data
+* data folder - Contains different sets of iris data
+* Unit test files
+  * test_data_validation.py - Validates the sanity of input data file
+  * test_graded_assignment.py - Validates the functionality of functions present in graded_assigment.py
+  * test_model_evaluation.py - Validates the inference model accuracy, precision, recall and f1 score
+* artifacts folder  contains the output file(s)
+* .github/workflows/ci.yaml - Contains the set of Github actions configuration
+* dvc.lock - Data model versioning result (of dvc repro command)
+* dvc.yaml - DVC configuration that includes training of the model, adding input dependencies and adding output folder configurations
+
+
+## Commands
 * Activate Google Cloud Shell
-* Run 'cd mlops/week2/'
+* Run 'cd mlops/week4/'
 * Run 'git clone https://github.com/21f1006125-ds/21f1006125_MLOPS_WEEKLY_ASSIGNMENT.git'
 * Enter credentials (Username and Password)
 * Run 'cd 21f1006125_MLOPS_WEEKLY_ASSIGNMENT/'
@@ -29,7 +43,7 @@ Incorporate Data Version Control (DVC) into IRIS machine learning pipeline to cr
   dvc remote add -d storage gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
   Use 'dvc remote list' for existing remote configuration
 * Create DVC pipeline
-  dvc stage add -n train -d week_2_graded_assignment.py -d data/iris.csv -o artifacts/model.joblib -o artifacts/predictions.csv python week_2_graded_assignment.py
+  dvc stage add -n train -d graded_assignment.py -d data/iris.csv -o artifacts/model.joblib -o artifacts/predictions.csv python graded_assignment.py
 * Run 'dvc repro' to train model and build dvc data and model versions
 * Run 'dvc push' to push data and model version objects to Google cloud storage
 * Run 'git commit' and 'git push' commands to keep the code at remote repository
