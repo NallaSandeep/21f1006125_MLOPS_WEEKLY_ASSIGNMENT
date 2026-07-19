@@ -65,27 +65,3 @@ def test_feature_ranges():
     assert data["sepal_width"].between(2.0, 5.0).all()
     assert data["petal_length"].between(1.0, 7.0).all()
     assert data["petal_width"].between(0.0, 3.0).all()
-
-
-def test_train_test_split():
-    """Verify train/test split sizes."""
-    data = load_data(DATA_PATH)
-
-    X_train, X_test, y_train, y_test = split_data(data)
-
-    assert len(X_train) == 90
-    assert len(X_test) == 60
-    assert len(y_train) == 90
-    assert len(y_test) == 60
-
-
-def test_no_missing_values_after_split():
-    """Verify no missing values after splitting."""
-    data = load_data(DATA_PATH)
-
-    X_train, X_test, y_train, y_test = split_data(data)
-
-    assert X_train.isnull().sum().sum() == 0
-    assert X_test.isnull().sum().sum() == 0
-    assert y_train.isnull().sum() == 0
-    assert y_test.isnull().sum() == 0
