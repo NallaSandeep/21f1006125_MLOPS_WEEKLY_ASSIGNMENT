@@ -13,7 +13,7 @@ from graded_assignment import (
 import mlflow
 import mlflow.sklearn
 
-mlflow.set_tracking_uri("http://34.9.168.212:8100")
+mlflow.set_tracking_uri("http://34.133.198.53:8100")
 
 DATA_PATH = "./data/iris.csv"
 
