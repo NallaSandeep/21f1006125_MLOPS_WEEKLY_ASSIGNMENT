@@ -8,12 +8,19 @@ from sklearn.metrics import (
 
 from graded_assignment import load_data, split_data
 
+import mlflow
+import mlflow.sklearn
+
 data = load_data("./data/iris_test.csv")
 _, X_test, _, y_test = split_data(data)
 
-model = joblib.load("./artifacts/model.joblib")
+mlflow.set_tracking_uri("http://34.9.168.212:8100")
 
-predictions = model.predict(X_test)
+inference_model = mlflow.sklearn.load_model(
+    model_uri="models:/IrisDecisionTree/latest"
+)
+predictions = inference_model.predict(X_test)
+
 
 print(f"- Accuracy : {accuracy_score(y_test, predictions):.3f}")
 print(f"- Precision: {precision_score(y_test, predictions, average='macro'):.3f}")
