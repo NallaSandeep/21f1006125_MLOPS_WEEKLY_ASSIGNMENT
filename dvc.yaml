@@ -4,6 +4,3 @@ stages:
     deps:
     - data/iris.csv
     - graded_assignment.py
-    outs:
-    - artifacts/model.joblib
-    - artifacts/predictions.csv

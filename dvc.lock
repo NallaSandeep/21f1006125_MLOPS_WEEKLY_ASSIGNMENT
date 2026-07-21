@@ -9,14 +9,5 @@ stages:
       size: 3861
     - path: graded_assignment.py
       hash: md5
-      md5: b3a7ae0628340b4557492b59f8342f22
-      size: 1758
-    outs:
-    - path: artifacts/model.joblib
-      hash: md5
-      md5: d94ef906bec389ec316cd0e5a164ac50
-      size: 2577
-    - path: artifacts/predictions.csv
-      hash: md5
-      md5: f63efc94dc07727791591acc28059f03
-      size: 2146
+      md5: 371949e41cd739ef8f2b016a72a0d990
+      size: 2359

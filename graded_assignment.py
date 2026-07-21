@@ -2,6 +2,7 @@ import os
 import joblib
 import pandas as pd
 import mlflow
+from mlflow import MlflowClient
 from mlflow.models import infer_signature
 from sklearn import metrics
 from sklearn.metrics import (
@@ -38,7 +39,7 @@ def split_data(data):
     return X_train, X_test, y_train, y_test
 
 
-def train_model(X_train, y_train):
+def train_model_log_mlflow(X_train, y_train, X_test, y_test):
     mlflow.set_tracking_uri("http://34.9.168.212:8100")
     client = MlflowClient()
     mlflow.set_experiment("iris_pipeline_experiment")
@@ -76,34 +77,12 @@ def train_model(X_train, y_train):
         return model, predictions, accuracy
 
 
-def evaluate_model(model, X_test, y_test):
-    predictions = model.predict(X_test)
-    accuracy = metrics.accuracy_score(y_test, predictions)
-    return predictions, accuracy
-
-
-def save_artifacts(model, X_test, y_test, predictions, artifact_dir="./artifacts"):
-    os.makedirs(artifact_dir, exist_ok=True)
-
-    results = X_test.copy()
-    results["Actual"] = y_test.values
-    results["Predicted"] = predictions
-
-    results.to_csv(f"{artifact_dir}/predictions.csv", index=False)
-    joblib.dump(model, f"{artifact_dir}/model.joblib")
-
 def main():
     data = load_data("./data/iris.csv")
 
     X_train, X_test, y_train, y_test = split_data(data)
 
-    model = train_model(X_train, y_train)
-
-    predictions, accuracy = evaluate_model(model, X_test, y_test)
-
-    print(f"The accuracy of the Decision Tree is {accuracy:.3f}")
-
-    save_artifacts(model, X_test, y_test, predictions)
+    train_model_log_mlflow(X_train, y_train, X_test, y_test)
 
 
 if __name__ == "__main__":
