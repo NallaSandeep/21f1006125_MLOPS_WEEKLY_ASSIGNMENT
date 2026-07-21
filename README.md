@@ -46,26 +46,19 @@ Add experiment tracking and a model registry to IRIS pipeline using MLflow — l
 * Press keys Ctrl + A and Ctrl + D to detach from screen
 * To list the existing screens, use 'screen -list'
 * To reattach to previous screen, use 'screen -R mlflow_experiment)
+* Create a firewall rule (Add detailed steps here)
+* Get the external IP address of the VM instance and access the IP (Say 34.9.168.212:8100) -> MLFlow UI page displays
 
 ## Commands
 * Activate Google Cloud Shell
-* Run 'cd mlops/week4/'
+* Run 'cd mlops/week5/' (create a directory if it doesn't exist)
 * Run 'git clone https://github.com/21f1006125-ds/21f1006125_MLOPS_WEEKLY_ASSIGNMENT.git'
 * Enter credentials (Username and Password)
 * Run 'cd 21f1006125_MLOPS_WEEKLY_ASSIGNMENT/'
 * Run 'python3 -m venv .env'
 * Run 'source .env/bin/activate'
 * Run 'pip install -r requirements.txt'
-* Run 'pip install dvc'
-* pip install dvc-gs
-* Run 'dvc init'
-* git add .dvc .dvcignore
-* git commit -m "Initialize DVC"
-* Configure GCP Cloud Storage as remote DVC
-  dvc remote add -d storage gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
-  Use 'dvc remote list' for existing remote configuration
-* Create DVC pipeline
-  dvc stage add -n train -d graded_assignment.py -d data/iris.csv -o artifacts/model.joblib -o artifacts/predictions.csv python graded_assignment.py
+* Run 'dvc pull' to pull corresponding versioned data
 * Run 'dvc repro' to train model and build dvc data and model versions
 * Run 'dvc push' to push data and model version objects to Google cloud storage
 * Run 'git commit' and 'git push' commands to keep the code at remote repository
