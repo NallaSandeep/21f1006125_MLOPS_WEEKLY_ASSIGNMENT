@@ -1,10 +1,17 @@
 import os
 import joblib
 import pandas as pd
+import mlflow
+from mlflow.models import infer_signature
 from sklearn import metrics
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+)
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-
 
 def load_data(path):
     return pd.read_csv(path)
@@ -32,9 +39,41 @@ def split_data(data):
 
 
 def train_model(X_train, y_train):
-    model = DecisionTreeClassifier(max_depth=3, random_state=1)
-    model.fit(X_train, y_train)
-    return model
+    mlflow.set_tracking_uri("http://34.9.168.212:8100")
+    client = MlflowClient()
+    mlflow.set_experiment("iris_pipeline_experiment")
+    
+    with mlflow.start_run():
+        params = {"max_depth": 4, "random_state": 1, "min_samples_split": 3}
+
+        model = DecisionTreeClassifier(**params)
+        model.fit(X_train, y_train)
+
+        predictions = model.predict(X_test)
+
+        accuracy = accuracy_score(y_test, predictions)
+        precision = precision_score(y_test, predictions, average="weighted")
+        recall = recall_score(y_test, predictions, average="weighted")
+        f1 = f1_score(y_test, predictions, average="weighted")
+
+        mlflow.log_params(params)
+        mlflow.log_metrics({
+            "accuracy": accuracy,
+            "precision": precision,
+            "recall": recall,
+            "f1_score": f1,
+        })
+
+        mlflow.sklearn.log_model(
+            sk_model=model,
+            name="decision_tree_model",
+            registered_model_name="IrisDecisionTree",
+            input_example=X_test[:5],
+            signature=infer_signature(X_test, predictions),
+        )
+
+        print(f"Accuracy={accuracy:.4f}")
+        return model, predictions, accuracy
 
 
 def evaluate_model(model, X_test, y_test):

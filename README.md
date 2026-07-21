@@ -1,16 +1,16 @@
-# Integrating CI into the IRIS Pipeline
+# Integrating MLflow into the IRIS Pipeline
 
 ## Overview
 
-Add continuous integration to your IRIS pipeline using GitHub Actions — automatically running evaluation tests, fetching versioned data and models via DVC, and reporting results on every push and pull request.
+Add experiment tracking and a model registry to IRIS pipeline using MLflow — logging hyperparameters, evaluation metrics, and trained models so we can compare experiments and serve the best model from a central registry.
 
 ## Objectives
 
-* Write Data Validation Tests
-* Write Model Evaluation Tests
-* Configure GitHub Actions with DVC
-* Enable CI on Every Push & PR
-* Merge to Main via Pull Request and validate CML test results as comment to PR
+* Instrument a training loop with MLflow to log hyperparameters, evaluation metrics, and model artifacts.
+* Compare experiments visually using the MLflow Tracking UI.
+* Register and version models in the MLflow Model Registry.
+* Modify downstream pipelines (evaluation, inference) to fetch models from the registry instead of DVC.
+* Understand how experiment tracking complements data versioning in an ML workflow.
 
 ## Included Files
 * graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, validates the model using test data
@@ -24,6 +24,28 @@ Add continuous integration to your IRIS pipeline using GitHub Actions — automa
 * dvc.lock - Data model versioning result (of dvc repro command)
 * dvc.yaml - DVC configuration that includes training of the model, adding input dependencies and adding output folder configurations
 
+## Steps to launch Vertex AI Workbench
+* Open Google Cloud Console
+* Search and open 'Vertex AI (Agentic Platform)' page
+* Select 'Notebooks' section
+* Select 'Workbench' section
+* Create a workbench instance if not created; Start the existing workbench instance if it already exists
+
+## Steps to start MLFlow instance
+* Open the workbench instance in SSH mode
+* Install mlflow library (pip install mlflow)
+* Create a new screen (screen -S mlflow_experiment)
+* Start mlflow server
+  ```
+  mlflow server \
+    --host 0.0.0.0 \
+    --port 8100 \
+    --allowed-hosts "*" \
+    --cors-allowed-origins "*"
+  ```
+* Press keys Ctrl + A and Ctrl + D to detach from screen
+* To list the existing screens, use 'screen -list'
+* To reattach to previous screen, use 'screen -R mlflow_experiment)
 
 ## Commands
 * Activate Google Cloud Shell
