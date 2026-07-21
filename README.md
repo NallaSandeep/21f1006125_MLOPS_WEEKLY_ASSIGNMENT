@@ -13,16 +13,16 @@ Add experiment tracking and a model registry to IRIS pipeline using MLflow — l
 * Understand how experiment tracking complements data versioning in an ML workflow.
 
 ## Included Files
-* graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, validates the model using test data
+* graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
 * data folder - Contains different sets of iris data
 * Unit test files
   * test_data_validation.py - Validates the sanity of input data file
   * test_graded_assignment.py - Validates the functionality of functions present in graded_assigment.py
-  * test_model_evaluation.py - Validates the inference model accuracy, precision, recall and f1 score
-* artifacts folder  contains the output file(s)
+  * test_model_evaluation.py - Validates the mlflow best/latest model accuracy, precision, recall and f1 score
 * .github/workflows/ci.yaml - Contains the set of Github actions configuration
 * dvc.lock - Data model versioning result (of dvc repro command)
-* dvc.yaml - DVC configuration that includes training of the model, adding input dependencies and adding output folder configurations
+* dvc.yaml - DVC configuration that includes training of the model, adding input dependencies
+  * Removed model dependency from dvc
 
 ## Steps to launch Vertex AI Workbench
 * Open Google Cloud Console
@@ -46,7 +46,7 @@ Add experiment tracking and a model registry to IRIS pipeline using MLflow — l
 * Press keys Ctrl + A and Ctrl + D to detach from screen
 * To list the existing screens, use 'screen -list'
 * To reattach to previous screen, use 'screen -R mlflow_experiment)
-* Create a firewall rule (Add detailed steps here)
+* Create a firewall rule to allow mlflow instance (External IP address of VPC instance, port: 8100)
 * Get the external IP address of the VM instance and access the IP (Say 34.133.198.53:8100) -> MLFlow UI page displays
 
 ## Commands
@@ -64,16 +64,10 @@ Add experiment tracking and a model registry to IRIS pipeline using MLflow — l
 * Run 'git commit' and 'git push' commands to keep the code at remote repository
 * Run 'git tag -a version -m "data with n records"
 
-## Data & Model Version Results
+## Hyper Parameter Tuning Results
 ### version 1
-* IRIS dataset count - 100 records
-* Train accuracy score - 0.925
-* Test accuracy score - 0.96
+* max_depth = 4; min_samples_split = 3
+* Test accuracy score - 0.95
 ### version 2
-* IRIS dataset count - 125 records
-* Train score - 0.94
-* Prediction score - 0.92
-### version 3
-* IRIS dataset count - 150 records
-* Train score - 0.983
-* Prediction score - 0.98
+* max_depth = 3; min_samples_split = 2
+* Test accuracy score - 0.983
