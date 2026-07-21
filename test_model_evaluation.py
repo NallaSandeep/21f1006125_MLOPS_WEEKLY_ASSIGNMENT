@@ -1,4 +1,3 @@
-import joblib
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -9,38 +8,31 @@ from sklearn.metrics import (
 from graded_assignment import (
     load_data,
     split_data,
-    train_model,
-    save_artifacts,
 )
+
+import mlflow
+import mlflow.sklearn
+
+mlflow.set_tracking_uri("http://34.9.168.212:8100")
 
 DATA_PATH = "./data/iris.csv"
 
 
-def get_trained_model(tmp_path):
+def get_trained_model():
     """Train and save the model for testing."""
     data = load_data(DATA_PATH)
 
     X_train, X_test, y_train, y_test = split_data(data)
 
-    model = train_model(X_train, y_train)
-
-    predictions = model.predict(X_test)
-
-    save_artifacts(
-        model,
-        X_test,
-        y_test,
-        predictions,
-        artifact_dir=tmp_path,
+    loaded_model = mlflow.sklearn.load_model(
+        model_uri="models:/IrisDecisionTree/latest"
     )
-
-    loaded_model = joblib.load(tmp_path / "model.joblib")
 
     return loaded_model, X_test, y_test
 
 
-def test_model_accuracy(tmp_path):
-    model, X_test, y_test = get_trained_model(tmp_path)
+def test_model_accuracy():
+    model, X_test, y_test = get_trained_model()
 
     predictions = model.predict(X_test)
 
@@ -49,8 +41,8 @@ def test_model_accuracy(tmp_path):
     assert accuracy >= 0.97
 
 
-def test_model_precision(tmp_path):
-    model, X_test, y_test = get_trained_model(tmp_path)
+def test_model_precision():
+    model, X_test, y_test = get_trained_model()
 
     predictions = model.predict(X_test)
 
@@ -63,8 +55,8 @@ def test_model_precision(tmp_path):
     assert precision >= 0.97
 
 
-def test_model_recall(tmp_path):
-    model, X_test, y_test = get_trained_model(tmp_path)
+def test_model_recall():
+    model, X_test, y_test = get_trained_model()
 
     predictions = model.predict(X_test)
 
@@ -77,8 +69,8 @@ def test_model_recall(tmp_path):
     assert recall >= 0.97
 
 
-def test_model_f1_score(tmp_path):
-    model, X_test, y_test = get_trained_model(tmp_path)
+def test_model_f1_score():
+    model, X_test, y_test = get_trained_model()
 
     predictions = model.predict(X_test)
 

@@ -2,7 +2,12 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 import joblib
 
-model = joblib.load("artifacts/model.joblib")
+import mlflow
+import mlflow.sklearn
+
+model = mlflow.sklearn.load_model(
+    model_uri="models:/IrisDecisionTree/latest"
+)
 
 test = pd.read_csv("data/iris.csv")
 
