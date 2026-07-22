@@ -47,7 +47,7 @@ Add experiment tracking and a model registry to IRIS pipeline using MLflow — l
 * To list the existing screens, use 'screen -list'
 * To reattach to previous screen, use 'screen -R mlflow_experiment)
 * Create a firewall rule to allow mlflow instance (External IP address of VPC instance, port: 8100)
-* Get the external IP address of the VM instance and access the IP (Say 34.133.198.53:8100) -> MLFlow UI page displays
+* Get the external IP address of the VM instance and access the IP (Say 136.116.255.54:8100) -> MLFlow UI page displays
 
 ## Commands
 * Activate Google Cloud Shell
