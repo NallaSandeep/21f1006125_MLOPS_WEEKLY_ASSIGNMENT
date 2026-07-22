@@ -1,50 +1,73 @@
-# Integrating DVC into the IRIS Pipeline
+# Integrating MLflow into the IRIS Pipeline
 
 ## Overview
 
-Incorporate Data Version Control (DVC) into IRIS machine learning pipeline to create a reproducible, version-controlled workflow for both data and model artifacts backed by Google Cloud Storage.
+Add experiment tracking and a model registry to IRIS pipeline using MLflow — logging hyperparameters, evaluation metrics, and trained models so we can compare experiments and serve the best model from a central registry.
 
 ## Objectives
 
-* Understand how DVC extends Git to handle large files, datasets, and ML models.
-* Configure a cloud-based remote storage backend (GCS) for DVC.
-* Practice versioning data and models across multiple training iterations.
-* Navigate between data versions using DVC checkout.
+* Instrument a training loop with MLflow to log hyperparameters, evaluation metrics, and model artifacts.
+* Compare experiments visually using the MLflow Tracking UI.
+* Register and version models in the MLflow Model Registry.
+* Modify downstream pipelines (evaluation, inference) to fetch models from the registry instead of DVC.
+* Understand how experiment tracking complements data versioning in an ML workflow.
 
-## Steps in Google Console
+## Included Files
+* graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
+* data folder - Contains different sets of iris data
+* Unit test files
+  * test_data_validation.py - Validates the sanity of input data file
+  * test_graded_assignment.py - Validates the functionality of functions present in graded_assigment.py
+  * test_model_evaluation.py - Validates the mlflow best/latest model accuracy, precision, recall and f1 score
+* .github/workflows/ci.yaml - Contains the set of Github actions configuration
+* dvc.lock - Data model versioning result (of dvc repro command)
+* dvc.yaml - DVC configuration that includes training of the model, adding input dependencies
+  * Removed model dependency from dvc
+
+## Steps to launch Vertex AI Workbench
+* Open Google Cloud Console
+* Search and open 'Vertex AI (Agentic Platform)' page
+* Select 'Notebooks' section
+* Select 'Workbench' section
+* Create a workbench instance if not created; Start the existing workbench instance if it already exists
+
+## Steps to start MLFlow instance
+* Open the workbench instance in SSH mode
+* Install mlflow library (pip install mlflow)
+* Create a new screen (screen -S mlflow_experiment)
+* Start mlflow server
+  ```
+  mlflow server \
+    --host 0.0.0.0 \
+    --port 8100 \
+    --allowed-hosts "*" \
+    --cors-allowed-origins "*"
+  ```
+* Press keys Ctrl + A and Ctrl + D to detach from screen
+* To list the existing screens, use 'screen -list'
+* To reattach to previous screen, use 'screen -R mlflow_experiment)
+* Create a firewall rule to allow mlflow instance (External IP address of VPC instance, port: 8100)
+* Get the external IP address of the VM instance and access the IP (Say 136.116.255.54:8100) -> MLFlow UI page displays
+
+## Commands
 * Activate Google Cloud Shell
-* Run 'cd mlops/week2/'
+* Run 'cd mlops/week5/' (create a directory if it doesn't exist)
 * Run 'git clone https://github.com/21f1006125-ds/21f1006125_MLOPS_WEEKLY_ASSIGNMENT.git'
 * Enter credentials (Username and Password)
 * Run 'cd 21f1006125_MLOPS_WEEKLY_ASSIGNMENT/'
 * Run 'python3 -m venv .env'
 * Run 'source .env/bin/activate'
 * Run 'pip install -r requirements.txt'
-* Run 'pip install dvc'
-* pip install dvc-gs
-* Run 'dvc init'
-* git add .dvc .dvcignore
-* git commit -m "Initialize DVC"
-* Configure GCP Cloud Storage as remote DVC
-  dvc remote add -d storage gs://mlops-course-project-eada5958-ab21-4f76-b53-graded-assignments
-  Use 'dvc remote list' for existing remote configuration
-* Create DVC pipeline
-  dvc stage add -n train -d week_2_graded_assignment.py -d data/iris.csv -o artifacts/model.joblib -o artifacts/predictions.csv python week_2_graded_assignment.py
+* Run 'dvc pull' to pull corresponding versioned data
 * Run 'dvc repro' to train model and build dvc data and model versions
 * Run 'dvc push' to push data and model version objects to Google cloud storage
 * Run 'git commit' and 'git push' commands to keep the code at remote repository
 * Run 'git tag -a version -m "data with n records"
 
-## Data & Model Version Results
+## Hyper Parameter Tuning Results
 ### version 1
-* IRIS dataset count - 100 records
-* Train accuracy score - 0.925
-* Test accuracy score - 0.96
+* max_depth = 4; min_samples_split = 3
+* Test accuracy score - 0.95
 ### version 2
-* IRIS dataset count - 125 records
-* Train score - 0.94
-* Prediction score - 0.92
-### version 3
-* IRIS dataset count - 150 records
-* Train score - 0.983
-* Prediction score - 0.98
+* max_depth = 3; min_samples_split = 2
+* Test accuracy score - 0.983

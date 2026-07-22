@@ -1,22 +1,13 @@
 schema: '2.0'
 stages:
   train:
-    cmd: python week_2_graded_assignment.py
+    cmd: python graded_assignment.py
     deps:
     - path: data/iris.csv
       hash: md5
       md5: 9c22f7cf3714d0c194f5f43a6276ca9d
       size: 3861
-    - path: week_2_graded_assignment.py
+    - path: graded_assignment.py
       hash: md5
-      md5: ab8f60a00b48239fde555515d785e88a
-      size: 1239
-    outs:
-    - path: artifacts/model.joblib
-      hash: md5
-      md5: d94ef906bec389ec316cd0e5a164ac50
-      size: 2577
-    - path: artifacts/predictions.csv
-      hash: md5
-      md5: f63efc94dc07727791591acc28059f03
-      size: 2146
+      md5: 371949e41cd739ef8f2b016a72a0d990
+      size: 2359

@@ -1,0 +1,95 @@
+name: CI with DVC and CML
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Authenticate to GCP using Workload Identity Federation
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-json-report
+          pip install dvc dvc-gs
+
+      # Install CML CLI
+      - name: Set up CML
+        uses: iterative/setup-cml@v2
+
+      - name: Verify GCP Authentication
+        run: |
+          gcloud auth list
+
+      - name: Pull DVC Data
+        run: |
+          dvc pull
+
+      - name: Run Unit Tests
+        run: |
+          pytest -v --json-report --json-report-file=test-report.json
+          cat test-report.json
+
+      - name: Evaluate Model
+        run: |
+          python evaluate.py > metrics.txt
+
+      - name: Generate Report
+        if: always()
+        run: |
+          echo "# CI Test Report" > report.md
+          echo "" >> report.md
+
+          echo "## Test Results" >> report.md
+
+          python - <<EOF >> report.md
+          import json
+
+          with open("test-report.json") as f:
+              report = json.load(f)
+
+          summary = report["summary"]
+
+          print(f"- Passed: {summary.get('passed', 0)}")
+          print(f"- Failed: {summary.get('failed', 0)}")
+          print(f"- Errors: {summary.get('error', 0)}")
+          print(f"- Skipped: {summary.get('skipped', 0)}")
+          EOF
+
+          echo "" >> report.md
+          echo "## Model Evaluation Metrics" >> report.md
+          cat metrics.txt >> report.md
+
+      - name: Publish CML Report
+        if: github.event_name == 'pull_request'
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cml comment create report.md
