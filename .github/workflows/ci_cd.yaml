@@ -122,21 +122,14 @@ jobs:
       # Deploy to GKE
       ####################################################
 
-      - name: Get GKE Credentials
-        uses: google-github-actions/get-gke-credentials@v2
-        with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_LOCATION }}
-          project_id: ${{ env.PROJECT_ID }}
-
       - name: Deploy to GKE
         run: |
-          kubectl set image deployment/iris-api \
-            iris-api=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          kubectl set image deployment/iris-prediction-service \
+            iris-api-sha256-1=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Wait for Rollout
         run: |
-          kubectl rollout status deployment/iris-api --timeout=300s
+          kubectl rollout status deployment/iris-prediction-service --timeout=300s
 
       - name: Verify Deployment
         run: |
