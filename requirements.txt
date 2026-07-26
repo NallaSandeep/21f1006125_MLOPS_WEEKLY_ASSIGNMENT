@@ -5,3 +5,5 @@ pytest
 mlflow
 dvc
 dvc-gs
+fastapi
+uvicorn

@@ -1,4 +1,4 @@
-name: CI with DVC and CML
+name: CI/CD with DVC, CML, Docker and GKE
 
 on:
   push:
@@ -9,8 +9,16 @@ permissions:
   id-token: write
   pull-requests: write
 
+env:
+  PROJECT_ID: project-eada5958-ab21-4f76-b53
+  REGION: us-central1
+  GAR_REPOSITORY: docker-images-repo
+  IMAGE_NAME: iris-api
+  GKE_CLUSTER: demo-kubernetes
+  GKE_LOCATION: us-central1
+
 jobs:
-  test:
+  ci-cd:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +30,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Authenticate to GCP using Workload Identity Federation
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -33,14 +40,13 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      - name: Install Python dependencies
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-json-report
           pip install dvc dvc-gs
 
-      # Install CML CLI
       - name: Set up CML
         uses: iterative/setup-cml@v2
 
@@ -66,10 +72,9 @@ jobs:
         run: |
           echo "# CI Test Report" > report.md
           echo "" >> report.md
-
           echo "## Test Results" >> report.md
 
-          python - <<EOF >> report.md
+          python <<EOF >> report.md
           import json
 
           with open("test-report.json") as f:
@@ -93,3 +98,48 @@ jobs:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cml comment create report.md
+
+      ####################################################
+      # Build & Push Docker Image
+      ####################################################
+
+      - name: Configure Docker Authentication
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            .
+
+      - name: Push Docker Image
+        run: |
+          docker push \
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      ####################################################
+      # Deploy to GKE
+      ####################################################
+
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_LOCATION }}
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Deploy to GKE
+        run: |
+          kubectl set image deployment/iris-api \
+            iris-api=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Wait for Rollout
+        run: |
+          kubectl rollout status deployment/iris-api --timeout=300s
+
+      - name: Verify Deployment
+        run: |
+          kubectl get deployments
+          kubectl get pods
+          kubectl get services

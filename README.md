@@ -60,6 +60,55 @@ curl -X POST "http://23.236.60.17:8200/predict/" \
 * Stop docker container
 ```docker stop <<container_id>>```
 
+## Set up Artifactory Registry for Docker Images
+* Open the workbench instance in SSH mode
+* Find the default service account in the workbench instance
+```gcloud auth list```
+* Add 'Service Usage Admin' role to the default service account if not yet added from Google cloud console -> IAM
+* Enable Artifact Registry API
+```gcloud services enable artifactregistry.googleapis.com```
+* Add 'Artifact Registry Administrator' role to the default service account if not yet added from Google cloud console -> IAM
+* Create Artificatory Repository for Docker images
+```
+gcloud artifacts repositories create docker-images-repo \
+--repository-format=docker \
+--location=us-central1 \
+--description="Docker repo for ML models"
+```
+* Authenticate Docker with Google cloud Artifactory Registry
+```gcloud auth configure-docker us-central1-docker.pkg.dev```
+* Tag previously created docker image ie., iris-api
+```docker tag iris-api us-central1-docker.pkg.dev/project-eada5958-ab21-4f76-b53/docker-images-repo/iris-api:latest```
+Docker understands:
+Registry: us-central1-docker.pkg.dev
+Project: project-eada5958-ab21-4f76-b53
+Repository: docker-images-repo
+Image: iris-api
+Version (tag): latest
+* Validate newly created tag using ```docker images```
+* Push docker image to GCP
+```docker push us-central1-docker.pkg.dev/project-eada5958-ab21-4f76-b53/docker-images-repo/iris-api:latest```
+* Validate the docker image at GCP console -> Artifact Registry
+
+## Inspect Docker Image
+* Inspect Docker image details (Image ID, Port, CMD, Env variables, OS details, entry point, Working Directory)
+```docker inspect iris-api```
+* Show how image was built
+```docker history iris-api```
+* Browser files inside the docker image -> Opens a new shell with working directory as present working directory
+```docker run -it --entrypoint /bin/bash iris-api```
+* From the shell, we can open application files (```/app # ls```), open files (```cat requirements.txt```), check python version (```python --version```)
+* Export the image (```docker save iris-api -o iris-api.tar```) -> Metadata, layers, manifest
+  Layers answer: "What files are in this image?"
+  Metadata answers: "How should this image run?"
+  Manifest answers: "Which layers and configuration make up this image?"
+
+
+
+## Setup Kubernetes
+* Create a cluster with default settings -> Takes about 5 min
+* 
+
 ## Steps to start MLFlow instance
 * Open the workbench instance in SSH mode
 * Install mlflow library (pip install mlflow)
