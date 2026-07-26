@@ -1,16 +1,16 @@
-# Integrating MLflow into the IRIS Pipeline
+# Integrating Continuous Deployment into the IRIS Pipeline
 
 ## Overview
 
-Add experiment tracking and a model registry to IRIS pipeline using MLflow — logging hyperparameters, evaluation metrics, and trained models so we can compare experiments and serve the best model from a central registry.
+Containerize your IRIS inference API with Docker and deploy it to Kubernetes on GCP — automating the entire build, push, and deploy cycle through GitHub Actions.
 
 ## Objectives
 
-* Instrument a training loop with MLflow to log hyperparameters, evaluation metrics, and model artifacts.
-* Compare experiments visually using the MLflow Tracking UI.
-* Register and version models in the MLflow Model Registry.
-* Modify downstream pipelines (evaluation, inference) to fetch models from the registry instead of DVC.
-* Understand how experiment tracking complements data versioning in an ML workflow.
+* Containerize an ML inference API using Docker.
+* Automate Docker image builds and pushes to Google Artifact Registry via GitHub Actions.
+* Configure GCP service accounts for CI/CD authentication.
+* Deploy a containerized application to Google Kubernetes Engine.
+* Understand the distinction between Docker containers and Kubernetes Pods.
 
 ## Included Files
 * graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
@@ -30,6 +30,35 @@ Add experiment tracking and a model registry to IRIS pipeline using MLflow — l
 * Select 'Notebooks' section
 * Select 'Workbench' section
 * Create a workbench instance if not created; Start the existing workbench instance if it already exists
+
+## Set up Docker instance
+* Open the workbench instance in SSH mode
+* Add my user to the docker group
+  ```sudo usermod -aG docker $USER```
+* Place a Dockerfile in the root folder of the project
+* Build a docker image with tag as iris-api by taking current folder as build context directory
+```docker build -t iris-api . ```
+* Validate docker image creation
+```docker images```
+* Start an instance for a docker image -> Returns a container ID
+```docker run -d -p 8200:8200 iris-api```
+* Check docker logs
+```docker logs <<container_id>>```
+* List containers
+```docker ps```
+* Validate the IRIS prediction model API
+```
+curl -X POST "http://23.236.60.17:8200/predict/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sepal_length": 5.1,
+    "sepal_width": 3.5,
+    "petal_length": 1.4,
+    "petal_width": 0.2
+  }'
+```
+* Stop docker container
+```docker stop <<container_id>>```
 
 ## Steps to start MLFlow instance
 * Open the workbench instance in SSH mode
