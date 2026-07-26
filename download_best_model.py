@@ -1,6 +1,6 @@
 import mlflow
 
-mlflow.set_tracking_uri("http://136.116.255.54:8100")
+mlflow.set_tracking_uri("http://34.170.148.37:8100")
 
 model_uri = "models:/IrisDecisionTree/latest"
 

@@ -40,7 +40,7 @@ def split_data(data):
 
 
 def train_model_log_mlflow(X_train, y_train, X_test, y_test):
-    mlflow.set_tracking_uri("http://136.116.255.54:8100")
+    mlflow.set_tracking_uri("http://34.170.148.37:8100")
     client = MlflowClient()
     mlflow.set_experiment("iris_pipeline_experiment")
     

@@ -111,7 +111,7 @@ Version (tag): latest
 
 ## Steps to start MLFlow instance
 * Open the workbench instance in SSH mode
-* Install mlflow library (pip install mlflow)
+* Install mlflow library (```pip install mlflow```)
 * Create a new screen (screen -S mlflow_experiment)
 * Start mlflow server
   ```
@@ -125,7 +125,7 @@ Version (tag): latest
 * To list the existing screens, use 'screen -list'
 * To reattach to previous screen, use 'screen -R mlflow_experiment)
 * Create a firewall rule to allow mlflow instance (External IP address of VPC instance, port: 8100)
-* Get the external IP address of the VM instance and access the IP (Say 136.116.255.54:8100) -> MLFlow UI page displays
+* Get the external IP address of the VM instance and access the IP (Say 34.170.148.37:8100) -> MLFlow UI page displays
 
 ## Commands
 * Activate Google Cloud Shell
