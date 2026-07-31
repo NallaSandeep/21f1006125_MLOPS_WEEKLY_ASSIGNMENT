@@ -1,16 +1,16 @@
-# Integrating Continuous Deployment into the IRIS Pipeline
+# Stress Testing, Observability & Scaling the IRIS Pipeline
 
 ## Overview
 
-Containerize your IRIS inference API with Docker and deploy it to Kubernetes on GCP — automating the entire build, push, and deploy cycle through GitHub Actions.
+Validate deployed IRIS API under high concurrency using wrk. Monitor Pod behavior through GCP Cloud Monitoring and Cloud Logging, observe Kubernetes autoscaling, and identify bottlenecks when scaling is constrained.
 
 ## Objectives
 
-* Containerize an ML inference API using Docker.
-* Automate Docker image builds and pushes to Google Artifact Registry via GitHub Actions.
-* Configure GCP service accounts for CI/CD authentication.
-* Deploy a containerized application to Google Kubernetes Engine.
-* Understand the distinction between Docker containers and Kubernetes Pods.
+* Extend CI/CD Workflow with Stress Testing
+* Simulate High-Concurrency Traffic with wrk
+* Configure Horizontal Pod Autoscaler
+* Monitor with GCP Cloud Monitoring & Cloud Logging
+* Observe Bottlenecks Under Constrained Scaling
 
 ## Included Files
 * graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
