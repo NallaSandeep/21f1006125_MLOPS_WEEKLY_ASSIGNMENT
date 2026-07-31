@@ -102,12 +102,13 @@ Version (tag): latest
   Layers answer: "What files are in this image?"
   Metadata answers: "How should this image run?"
   Manifest answers: "Which layers and configuration make up this image?"
-
++
 
 
 ## Setup Kubernetes
 * Create a cluster with default settings -> Takes about 5 min
-* 
+* Create a workload from the existing image
+* Expose it via load balancer
 
 ## Steps to start MLFlow instance
 * Open the workbench instance in SSH mode
