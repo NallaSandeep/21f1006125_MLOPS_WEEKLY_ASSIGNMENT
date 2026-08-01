@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iris-prediction-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iris-prediction-service
+  template:
+    metadata:
+      labels:
+        app: iris-prediction-service
+    spec:
+      containers:
+      - name: iris-api-sha256-1
+        image: us-central1-docker.pkg.dev/project-eada5958-ab21-4f76-b53/docker-images-repo/iris-api:latest
+        ports:
+        - containerPort: 8200
+        readinessProbe:
+          httpGet:
+            path: /ready_check
+            port: 8200
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /live_check
+            port: 8200
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

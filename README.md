@@ -31,6 +31,20 @@ Validate deployed IRIS API under high concurrency using wrk. Monitor Pod behavi
 * Select 'Workbench' section
 * Create a workbench instance if not created; Start the existing workbench instance if it already exists
 
+## Kubernetes commands used
+* Check if HPA is already configured
+```kubectl get hpa```
+* Fetch Kubernetes pods information
+```kubectl get pods```
+* Fetch kubernetes HPA yaml
+```kubectl get hpa iris-prediction-service-hpa-ugvm -o yaml```
+* Fetch kubernetes HPA description
+```kubectl describe hpa iris-prediction-service```
+* Fetch kubernetes deployment yaml
+```kubectl get deployment iris-prediction-service -o yaml```
+* Fetch kubernetes service yaml
+```kubectl get service iris-prediction-service -o yaml```
+
 ## Set up Docker instance
 * Open the workbench instance in SSH mode
 * Add my user to the docker group

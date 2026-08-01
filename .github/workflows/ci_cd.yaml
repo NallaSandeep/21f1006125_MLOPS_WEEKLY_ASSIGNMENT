@@ -129,6 +129,9 @@ jobs:
           location: ${{ env.GKE_LOCATION }}
           project_id: ${{ env.PROJECT_ID }}
 
+      - name: Deploy manifests
+        run: kubectl apply -f k8s/
+
       - name: Deploy to GKE
         run: |
           kubectl set image deployment/iris-prediction-service \
@@ -137,6 +140,37 @@ jobs:
       - name: Wait for Rollout
         run: |
           kubectl rollout status deployment/iris-prediction-service --timeout=300s
+
+      - name: Install wrk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wrk
+
+      - name: Create wrk script
+        run: |
+          cat <<'EOF' > stress-test.lua
+          wrk.method = "POST"
+
+          wrk.body = [[
+          {
+            "sepal_length": 5.1,
+            "sepal_width": 3.5,
+            "petal_length": 1.4,
+            "petal_width": 0.2
+          }
+          ]]
+
+          wrk.headers["Content-Type"] = "application/json"
+          EOF
+
+      - name: Run load test
+        run: |
+          wrk \
+            -t4 \
+            -c50 \
+            -d30s \
+            -s stress-test.lua \
+            http://35.188.76.247:80/predict
 
       - name: Verify Deployment
         run: |
