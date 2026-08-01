@@ -136,7 +136,7 @@ jobs:
       - name: Deploy to GKE
         run: |
           kubectl set image deployment/iris-prediction-service \
-            iris-api-sha256-1=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            iris-prediction-service=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Wait for Rollout
         run: |
