@@ -14,6 +14,7 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 MODEL_PATH = "/app/model"
 
@@ -37,11 +38,9 @@ async def lifespan(app: FastAPI):
     # Shutdown
     app_state["is_ready"] = False
 
-
-app = FastAPI(title="Iris Prediction API", lifespan=lifespan)
-
 # Setup Tracer
-trace.set_tracer_provider(TracerProvider())
+tracer_provider = TracerProvider()
+trace.set_tracer_provider(tracer_provider)
 tracer = trace.get_tracer(__name__)
 span_processor = BatchSpanProcessor(CloudTraceSpanExporter())
 trace.get_tracer_provider().add_span_processor(span_processor)
@@ -127,6 +126,13 @@ class JsonFormatter(logging.Formatter):
 
 handler.setFormatter(JsonFormatter())
 logger.addHandler(handler)
+
+app = FastAPI(title="Iris Prediction API", lifespan=lifespan)
+
+FastAPIInstrumentor.instrument_app(
+    app,
+    tracer_provider=tracer_provider
+)
 
 class IrisRequest(BaseModel):
     sepal_length: float
