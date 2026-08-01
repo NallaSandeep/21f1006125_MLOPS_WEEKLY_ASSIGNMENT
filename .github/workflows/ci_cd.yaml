@@ -59,6 +59,7 @@ jobs:
           dvc pull
 
       - name: Run Unit Tests
+        timeout-minutes: 3
         run: |
           pytest -v --json-report --json-report-file=test-report.json
           cat test-report.json
@@ -170,7 +171,7 @@ jobs:
             -c50 \
             -d30s \
             -s stress-test.lua \
-            http://35.188.76.247:80/predict
+            http://35.254.236.21:80/predict
 
       - name: Verify Deployment
         run: |
