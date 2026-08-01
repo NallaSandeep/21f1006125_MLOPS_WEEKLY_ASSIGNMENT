@@ -51,10 +51,6 @@ logger = logging.getLogger("iris-prediction-service")
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 
-# ---------------------------------------------------------
-# Structured JSON Logging
-# ---------------------------------------------------------
-
 STANDARD_LOG_ATTRIBUTES = {
     "name",
     "msg",

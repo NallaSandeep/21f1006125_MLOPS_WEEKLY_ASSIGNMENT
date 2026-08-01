@@ -161,7 +161,7 @@ Version (tag): latest
 * To list the existing screens, use 'screen -list'
 * To reattach to previous screen, use 'screen -R mlflow_experiment)
 * Create a firewall rule to allow mlflow instance (External IP address of VPC instance, port: 8100)
-* Get the external IP address of the VM instance and access the IP (Say 35.188.34.106:8100) -> MLFlow UI page displays
+* Get the external IP address of the VM instance and access the IP (Say 34.46.130.19:8100) -> MLFlow UI page displays
 
 ## Commands
 * Activate Google Cloud Shell
