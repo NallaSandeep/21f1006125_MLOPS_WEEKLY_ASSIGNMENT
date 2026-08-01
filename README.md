@@ -31,6 +31,10 @@ Validate deployed IRIS API under high concurrency using wrk. Monitor Pod behavi
 * Select 'Workbench' section
 * Create a workbench instance if not created; Start the existing workbench instance if it already exists
 
+## Enabled Logging API
+* ```gcloud services enable cloudtrace.googleapis.com \
+  --project=project-eada5958-ab21-4f76-b53```
+
 ## Kubernetes commands used
 * Check if HPA is already configured
 ```kubectl get hpa```

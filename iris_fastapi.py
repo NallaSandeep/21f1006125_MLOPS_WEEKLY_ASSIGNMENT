@@ -89,10 +89,6 @@ class JsonFormatter(logging.Formatter):
 
         span = trace.get_current_span()
         span_context = span.get_span_context()
-        print("SPAN:", span)
-        print("VALID:", span_context.is_valid)
-        print("TRACE ID:", span_context.trace_id)
-        print("SPAN ID:", span_context.span_id)
 
         if span_context.is_valid:
             log_entry["trace_id"] = format(
