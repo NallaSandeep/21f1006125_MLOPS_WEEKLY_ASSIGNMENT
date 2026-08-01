@@ -45,6 +45,27 @@ Validate deployed IRIS API under high concurrency using wrk. Monitor Pod behavi
 * Fetch kubernetes service yaml
 ```kubectl get service iris-prediction-service -o yaml```
 
+## Stress testing commands
+* Install wrk library
+```sudo apt-get install -y wrk```
+* Create a lua file (Say with file name - stress-test.lua)
+```
+wrk.method = "POST"
+
+wrk.body = [[
+{
+  "sepal_length": 5.1,
+  "sepal_width": 3.5,
+  "petal_length": 1.4,
+  "petal_width": 0.2
+}
+]]
+
+wrk.headers["Content-Type"] = "application/json"
+```
+* Run the following command
+```wrk -t4 -c1000 -d30s  -s stress-test.lua http://34.63.25.44:80/predict```
+
 ## Set up Docker instance
 * Open the workbench instance in SSH mode
 * Add my user to the docker group

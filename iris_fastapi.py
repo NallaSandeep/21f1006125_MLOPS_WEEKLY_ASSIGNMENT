@@ -51,6 +51,34 @@ logger = logging.getLogger("iris-prediction-service")
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 
+# ---------------------------------------------------------
+# Structured JSON Logging
+# ---------------------------------------------------------
+
+STANDARD_LOG_ATTRIBUTES = {
+    "name",
+    "msg",
+    "args",
+    "levelname",
+    "levelno",
+    "pathname",
+    "filename",
+    "module",
+    "exc_info",
+    "exc_text",
+    "stack_info",
+    "lineno",
+    "funcName",
+    "created",
+    "msecs",
+    "relativeCreated",
+    "thread",
+    "threadName",
+    "processName",
+    "process",
+    "taskName",
+}
+
 class JsonFormatter(logging.Formatter):
 
     def format(self, record):
@@ -66,6 +94,10 @@ class JsonFormatter(logging.Formatter):
 
         span = trace.get_current_span()
         span_context = span.get_span_context()
+        print("SPAN:", span)
+        print("VALID:", span_context.is_valid)
+        print("TRACE ID:", span_context.trace_id)
+        print("SPAN ID:", span_context.span_id)
 
         if span_context.is_valid:
             log_entry["trace_id"] = format(
@@ -83,7 +115,8 @@ class JsonFormatter(logging.Formatter):
         # -------------------------------------------------
 
         for key, value in record.__dict__.items():
-            log_entry[key] = value
+            if key not in STANDARD_LOG_ATTRIBUTES:
+                log_entry[key] = value
 
         # Include exception details
         if record.exc_info:

@@ -13,7 +13,7 @@ spec:
         app: iris-prediction-service
     spec:
       containers:
-      - name: iris-api-sha256-1
+      - name: iris-prediction-service
         image: us-central1-docker.pkg.dev/project-eada5958-ab21-4f76-b53/docker-images-repo/iris-api:latest
         ports:
         - containerPort: 8200
