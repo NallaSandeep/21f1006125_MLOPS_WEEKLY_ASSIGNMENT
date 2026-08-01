@@ -6,6 +6,7 @@ import pandas as pd
 import time
 import logging
 import json
+from datetime import datetime, timezone
 
 from contextlib import asynccontextmanager
 
@@ -46,16 +47,56 @@ span_processor = BatchSpanProcessor(CloudTraceSpanExporter())
 trace.get_tracer_provider().add_span_processor(span_processor)
 
 # Setup structured logging
-logger = logging.getLogger("demo-log-ml-service")
+logger = logging.getLogger("iris-prediction-service")
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 
-formatter = logging.Formatter(json.dumps({
-    "severity": "%(levelname)s",
-    "message": "%(message)s",
-    "timestamp": "%(asctime)s"
-}))
-handler.setFormatter(formatter)
+class JsonFormatter(logging.Formatter):
+
+    def format(self, record):
+        log_entry = {
+            "severity": record.levelname,
+            "message": record.getMessage(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+        # -------------------------------------------------
+        # Add OpenTelemetry trace information
+        # -------------------------------------------------
+
+        span = trace.get_current_span()
+        span_context = span.get_span_context()
+
+        if span_context.is_valid:
+            log_entry["trace_id"] = format(
+                span_context.trace_id,
+                "032x"
+            )
+
+            log_entry["span_id"] = format(
+                span_context.span_id,
+                "016x"
+            )
+
+        # -------------------------------------------------
+        # Add fields passed through extra={}
+        # -------------------------------------------------
+
+        for key, value in record.__dict__.items():
+            log_entry[key] = value
+
+        # Include exception details
+        if record.exc_info:
+            log_entry["exception"] = self.formatException(
+                record.exc_info
+            )
+
+        return json.dumps(
+            log_entry,
+            default=str
+        )
+
+handler.setFormatter(JsonFormatter())
 logger.addHandler(handler)
 
 class IrisRequest(BaseModel):
@@ -172,11 +213,13 @@ async def exception_handler(request: Request, exc: Exception):
 
 @app.post("/predict")
 def predict(request: IrisRequest):
-    logger.info("Input Request")
     input_df = pd.DataFrame([request.model_dump()])
 
     prediction = model.predict(input_df)[0]
 
-    return {
+    response = {
         "predicted_class": prediction
     }
+
+    logger.info("Predictions response %s", prediction, extra=response)
+    return response
