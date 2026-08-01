@@ -7,3 +7,4 @@ dvc
 dvc-gs
 fastapi
 uvicorn
+opentelemetry-exporter-gcp-trace

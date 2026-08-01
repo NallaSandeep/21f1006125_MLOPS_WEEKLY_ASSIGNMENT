@@ -1,7 +1,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: iris-prediction-service-hpa-ugvm
+  name: iris-prediction-service-hpa
 spec:
   minReplicas: 1
   maxReplicas: 3
