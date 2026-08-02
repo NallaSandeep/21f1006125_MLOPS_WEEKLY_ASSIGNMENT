@@ -35,6 +35,8 @@ Validate deployed IRIS API under high concurrency using wrk. Monitor Pod behavi
 * ```gcloud services enable cloudtrace.googleapis.com \
   --project=project-eada5958-ab21-4f76-b53```
 
+gcloud services enable cloudtrace.googleapis.com   --project=project-eada5958-ab21-4f76-b53
+
 ## Kubernetes commands used
 * Check if HPA is already configured
 ```kubectl get hpa```
@@ -48,6 +50,21 @@ Validate deployed IRIS API under high concurrency using wrk. Monitor Pod behavi
 ```kubectl get deployment iris-prediction-service -o yaml```
 * Fetch kubernetes service yaml
 ```kubectl get service iris-prediction-service -o yaml```
+* Create K8s service account
+```
+kubectl create serviceaccount iris-api \
+  --namespace=default
+```
+* Assign cloudtrace role
+```
+PROJECT_ID="project-eada5958-ab21-4f76-b53"
+PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" \
+  --format="value(projectNumber)")
+echo $PROJECT_NUMBER
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --role="roles/cloudtrace.agent" \
+  --member="principal://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${PROJECT_ID}.svc.id.goog/subject/ns/default/sa/iris-api"
+```
 
 ## Stress testing commands
 * Install wrk library

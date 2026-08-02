@@ -12,6 +12,7 @@ spec:
       labels:
         app: iris-prediction-service
     spec:
+      serviceAccountName: iris-api
       containers:
       - name: iris-prediction-service
         image: us-central1-docker.pkg.dev/project-eada5958-ab21-4f76-b53/docker-images-repo/iris-api:latest
