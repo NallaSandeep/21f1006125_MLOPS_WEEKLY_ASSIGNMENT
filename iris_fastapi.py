@@ -244,13 +244,21 @@ async def exception_handler(request: Request, exc: Exception):
 
 @app.post("/predict")
 def predict(request: IrisRequest):
-    input_df = pd.DataFrame([request.model_dump()])
+    with tracer.start_as_current_span("model_inference") as span:
+        span_context = span.get_span_context()
+        span_id = (
+            format(span_context.span_id, "016x")
+            if span_context.is_valid
+            else None
+        )
+        input_df = pd.DataFrame([request.model_dump()])
 
-    prediction = model.predict(input_df)[0]
+        prediction = model.predict(input_df)[0]
 
-    response = {
-        "predicted_class": prediction
-    }
+        response = {
+            "predicted_class": prediction,
+            "span_id": span_id,
+        }
 
-    logger.info("Predictions response %s", prediction, extra=response)
-    return response
+        logger.info("Predictions response %s", prediction, extra=response)
+        return response
