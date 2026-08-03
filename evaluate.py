@@ -14,7 +14,7 @@ import mlflow.sklearn
 data = load_data("./data/iris_test.csv")
 _, X_test, _, y_test = split_data(data)
 
-mlflow.set_tracking_uri("http://35.239.170.156:8100")
+mlflow.set_tracking_uri("http://34.170.107.212:8100")
 
 inference_model = mlflow.sklearn.load_model(
     model_uri="models:/IrisDecisionTree/latest"
