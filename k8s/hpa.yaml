@@ -4,7 +4,7 @@ metadata:
   name: iris-prediction-service-hpa
 spec:
   minReplicas: 1
-  maxReplicas: 1
+  maxReplicas: 3
   metrics:
   - type: Resource
     resource:
