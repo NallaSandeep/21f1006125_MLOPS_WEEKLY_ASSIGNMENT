@@ -65,6 +65,11 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" \
   --role="roles/cloudtrace.agent" \
   --member="principal://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${PROJECT_ID}.svc.id.goog/subject/ns/default/sa/iris-api"
 ```
+* Get the list of pods
+```kubectl get pods -w```
+* Check kubernetes pod events
+```kubectl describe pod iris-prediction-service-9dc55985f-2qdpx```
+
 
 ## Stress testing commands
 * Install wrk library

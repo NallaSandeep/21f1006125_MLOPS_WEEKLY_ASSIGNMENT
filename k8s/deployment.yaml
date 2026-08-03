@@ -18,18 +18,23 @@ spec:
         image: us-central1-docker.pkg.dev/project-eada5958-ab21-4f76-b53/docker-images-repo/iris-api:latest
         ports:
         - containerPort: 8200
+        startupProbe:
+          httpGet:
+            path: /live_check
+            port: 8200
+          periodSeconds: 15
         readinessProbe:
           httpGet:
             path: /ready_check
             port: 8200
-          initialDelaySeconds: 5
-          periodSeconds: 5
+          initialDelaySeconds: 30
+          periodSeconds: 30
         livenessProbe:
           httpGet:
             path: /live_check
             port: 8200
-          initialDelaySeconds: 5
-          periodSeconds: 10
+          initialDelaySeconds: 45
+          periodSeconds: 30
         resources:
           requests:
             cpu: "1000m"
