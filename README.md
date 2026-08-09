@@ -1,16 +1,15 @@
-# Stress Testing, Observability & Scaling the IRIS Pipeline
+# Integrating MLSecOps into the IRIS Pipeline
 
 ## Overview
-
-Validate deployed IRIS API under high concurrency using wrk. Monitor Pod behavior through GCP Cloud Monitoring and Cloud Logging, observe Kubernetes autoscaling, and identify bottlenecks when scaling is constrained.
+Explore ML security threat vectors, simulate data poisoning attacks on the IRIS dataset at varying severity levels, measure the impact on model performance using MLflow, and reason about mitigation strategies.
 
 ## Objectives
 
-* Extend CI/CD Workflow with Stress Testing
-* Simulate High-Concurrency Traffic with wrk
-* Configure Horizontal Pod Autoscaler
-* Monitor with GCP Cloud Monitoring & Cloud Logging
-* Observe Bottlenecks Under Constrained Scaling
+* Identify the major security threat vectors across the ML pipeline.
+* Simulate data poisoning attacks at varying severity levels on a real dataset.
+* Use MLflow to track and compare the impact of poisoned data on model metrics.
+* Reason about mitigation strategies and data quality requirements in production.
+* Understand the relationship between data quantity and data quality under adversarial conditions.
 
 ## Included Files
 * graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
@@ -207,7 +206,7 @@ Version (tag): latest
 * To list the existing screens, use 'screen -list'
 * To reattach to previous screen, use 'screen -R mlflow_experiment)
 * Create a firewall rule to allow mlflow instance (External IP address of VPC instance, port: 8100)
-* Get the external IP address of the VM instance and access the IP (Say 34.135.11.4:8100) -> MLFlow UI page displays
+* Get the external IP address of the VM instance and access the IP (Say 34.172.133.255:8100) -> MLFlow UI page displays
 
 ## Commands
 * Activate Google Cloud Shell
