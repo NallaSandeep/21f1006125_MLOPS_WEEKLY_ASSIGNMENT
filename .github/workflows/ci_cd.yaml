@@ -94,7 +94,6 @@ jobs:
           cat metrics.txt >> report.md
 
       - name: Publish CML Report
-        if: github.event_name == 'pull_request'
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

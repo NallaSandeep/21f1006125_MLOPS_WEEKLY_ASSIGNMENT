@@ -23,6 +23,22 @@ Validate deployed IRIS API under high concurrency using wrk. Monitor Pod behavi
 * dvc.lock - Data model versioning result (of dvc repro command)
 * dvc.yaml - DVC configuration that includes training of the model, adding input dependencies
   * Removed model dependency from dvc
+* secure_data_pipeline.py - fail-closed Iris ingestion with schema, range,
+  duplicate, and class-conditional anomaly checks; it writes quarantined rows
+  and a SHA-256 provenance manifest.
+
+## Secure data ingestion
+
+Run `python secure_data_pipeline.py data/iris_150.csv`. The command writes
+`artifacts/data_security/iris_clean.csv`, `iris_quarantine.csv`, and a
+provenance report. Training should use only `iris_clean.csv` after reviewing
+the quarantine report.
+
+The report includes `clean_data_ratio` and `minimum_total_for_100_clean_rows`.
+For a required clean set size `C` and observed clean ratio `q`, plan to ingest
+at least `ceil(C / q)` records. This is a capacity estimate for randomly
+detected bad rows—not a reason to accept targeted poisoning; systematic
+anomalies must be investigated and removed before training.
 
 ## Steps to launch Vertex AI Workbench
 * Open Google Cloud Console
