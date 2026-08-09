@@ -5,9 +5,9 @@ stages:
     deps:
     - path: data/iris.csv
       hash: md5
-      md5: 9c22f7cf3714d0c194f5f43a6276ca9d
-      size: 3861
+      md5: 2e7f84ef15d3dfab509670fb0b69b72a
+      size: 8188
     - path: graded_assignment.py
       hash: md5
-      md5: 371949e41cd739ef8f2b016a72a0d990
-      size: 2359
+      md5: 29a710f83f1e62f5b7d8155ba6d31e3f
+      size: 2358

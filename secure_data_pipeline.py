@@ -68,7 +68,7 @@ def validate_and_quarantine(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFr
         median = valid_group.median()
         mad = (valid_group - median).abs().median().replace(0, 1e-6)
         robust_z = 0.6745 * (group[FEATURES] - median).abs() / mad
-        suspicious = (robust_z > 5.0).sum(axis=1) >= 2
+        suspicious = (robust_z > 5).sum(axis=1) >= 2
         reasons.loc[group.index[suspicious]] += "class_conditional_anomaly;"
 
     quarantined = checked.loc[reasons.ne("")].copy()
@@ -99,7 +99,7 @@ def secure_ingest(source: str | Path, output_dir: str | Path) -> dict:
         "accepted_rows": len(clean),
         "quarantined_rows": len(quarantined),
         "clean_data_ratio": len(clean) / len(data) if len(data) else 0.0,
-        "minimum_total_for_100_clean_rows": int(np.ceil(100 / (len(clean) / len(data)))) if len(clean) else None,
+        "minimum_total_for_150_clean_rows": int(np.ceil(150 / (len(clean) / len(data)))) if len(clean) else None,
         "outputs": {"clean": str(clean_path), "quarantine": str(quarantine_path)},
     }
     manifest_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
