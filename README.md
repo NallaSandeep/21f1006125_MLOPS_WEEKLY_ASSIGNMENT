@@ -85,11 +85,14 @@ python data_drift_detection.py
 
 The command splits the input into original training and test sets, shifts
 `petal_length` in a simulated production copy of the test set, and writes the
-production data, drift report, distribution plots, and performance comparison
-to `artifacts/drift/`. A p-value below `0.05` marks a feature as drifted. The
-performance report compares the model on the unchanged test data and the
-labelled simulated production data. A deployed model may become less reliable
-when it sees the changed feature distribution it was not trained on.
+baseline test data, simulated production data, an Evidently HTML/JSON drift
+report, and a performance comparison to `artifacts/drift/`. Evidently compares
+the unchanged baseline test set with its shifted production copy, isolating the
+simulated shift from ordinary train/test sampling variation. For this small
+numerical data set, Evidently uses the K-S p-value method. The performance
+report compares the model on the unchanged test data and the labelled simulated
+production data. A deployed model may become less reliable when it sees the
+changed feature distribution it was not trained on.
 
 ## Steps to launch Vertex AI Workbench
 * Open Google Cloud Console

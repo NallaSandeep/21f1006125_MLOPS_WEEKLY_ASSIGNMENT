@@ -64,9 +64,11 @@ them away. Sepal measurements have less influence in this model.
 ## Drift and production-performance assessment
 
 To simulate production drift, `1.0` was added to petal length in the labelled
-test data. A two-sample Kolmogorov-Smirnov test detected petal-length drift
-(`KS statistic = 0.344`, `p = 0.000294`), while the other three features were
-not flagged at the 0.05 significance level.
+baseline test data. Evidently's `DataDriftPreset` compares this unchanged
+baseline with its shifted production copy, so the report isolates the simulated
+shift. It detected petal-length drift using its automatically selected K-S
+p-value method (`p = 0.001171`); the other three features were not flagged at
+the 0.05 significance level.
 
 The model was evaluated on the unchanged test data and on the corresponding
 shifted production data:

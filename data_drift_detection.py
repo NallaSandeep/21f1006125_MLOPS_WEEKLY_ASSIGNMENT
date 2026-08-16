@@ -3,13 +3,9 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-
-import matplotlib.pyplot as plt
 import pandas as pd
-from scipy.stats import ks_2samp
+from evidently import Report
+from evidently.presets import DataDriftPreset
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
@@ -27,40 +23,38 @@ def simulate_production_data(
     return production_data
 
 
-def detect_drift(
-    training_data: pd.DataFrame, production_data: pd.DataFrame, alpha: float
+def run_evidently_drift_report(
+    training_data: pd.DataFrame,
+    production_data: pd.DataFrame,
+    output_dir: Path,
+    alpha: float,
 ) -> pd.DataFrame:
-    """Use a two-sample KS test to compare every Iris feature distribution."""
+    """Run Evidently's preset and return its per-feature drift results."""
+    report = Report(
+        [DataDriftPreset(columns=FEATURE_COLUMNS, num_threshold=alpha)]
+    )
+    result = report.run(
+        current_data=production_data[FEATURE_COLUMNS],
+        reference_data=training_data[FEATURE_COLUMNS],
+    )
+    result.save_html(str(output_dir / "evidently_data_drift_report.html"))
+    result.save_json(str(output_dir / "evidently_data_drift_report.json"))
+
     results = []
-    for feature in FEATURE_COLUMNS:
-        statistic, p_value = ks_2samp(training_data[feature], production_data[feature])
+    for metric in result.dict()["metrics"]:
+        config = metric["config"]
+        if config["type"] != "evidently:metric_v2:ValueDrift":
+            continue
+        p_value = float(metric["value"])
         results.append(
             {
-                "feature": feature,
-                "ks_statistic": statistic,
+                "feature": config["column"],
+                "method": config["method"],
                 "p_value": p_value,
                 "drift_detected": p_value < alpha,
             }
         )
     return pd.DataFrame(results)
-
-
-def save_distribution_plots(
-    training_data: pd.DataFrame, production_data: pd.DataFrame, output_path: Path
-) -> None:
-    """Save side-by-side training versus production feature histograms."""
-    figure, axes = plt.subplots(2, 2, figsize=(12, 8))
-    for axis, feature in zip(axes.ravel(), FEATURE_COLUMNS):
-        axis.hist(training_data[feature], bins=15, alpha=0.6, label="training")
-        axis.hist(production_data[feature], bins=15, alpha=0.6, label="production")
-        axis.set_title(feature)
-        axis.set_xlabel("feature value")
-        axis.set_ylabel("sample count")
-        axis.legend()
-    figure.suptitle("Iris training vs. simulated production distributions")
-    figure.tight_layout()
-    figure.savefig(output_path, dpi=200, bbox_inches="tight")
-    plt.close(figure)
 
 
 def evaluate_performance(
@@ -115,14 +109,18 @@ if __name__ == "__main__":
     model.fit(training[FEATURE_COLUMNS], training["species"])
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
+    baseline_test.to_csv(args.output_dir / "iris_baseline_test.csv", index=False)
     production.to_csv(args.output_dir / "iris_production_simulated.csv", index=False)
-    report = detect_drift(training, production, args.alpha)
+    # Compare the unchanged baseline with its shifted copy. This isolates the
+    # simulated production shift from ordinary train/test sampling variation.
+    report = run_evidently_drift_report(
+        baseline_test, production, args.output_dir, args.alpha
+    )
     report.to_csv(args.output_dir / "drift_report.csv", index=False)
-    save_distribution_plots(training, production, args.output_dir / "feature_distributions.png")
     performance_report = evaluate_performance(model, baseline_test, production)
     performance_report.to_csv(args.output_dir / "performance_report.csv", index=False)
 
-    print("Drift report (two-sample Kolmogorov-Smirnov test):")
+    print("Evidently data-drift report:")
     print(report.to_string(index=False))
     print("\nModel performance:")
     print(performance_report.to_string(index=False))

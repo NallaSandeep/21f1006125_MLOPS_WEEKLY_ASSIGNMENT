@@ -2,8 +2,8 @@ pandas
 scikit-learn
 fairlearn
 shap
-scipy
 matplotlib
+evidently
 joblib
 pytest
 mlflow
