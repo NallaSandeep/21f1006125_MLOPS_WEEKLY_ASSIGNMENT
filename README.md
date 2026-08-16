@@ -74,6 +74,21 @@ the left push away. Red dots represent high feature values and blue dots low
 feature values. Therefore, red dots clustered on the right indicate that high
 values of that feature strongly support a Virginica prediction.
 
+## Data drift detection
+
+Simulate production data by adding `1.0` to `petal_length`, then compare each
+feature to the training distribution with a two-sample Kolmogorov-Smirnov test:
+
+```bash
+python data_drift_detection.py
+```
+
+The command writes the simulated production data, a CSV drift report, and
+feature-distribution plots to `artifacts/drift/`. A p-value below `0.05` marks
+a feature as drifted. The default simulation should identify `petal_length` as
+drifted; a deployed model may become less reliable when it sees this changed
+feature distribution because it was trained on different input patterns.
+
 ## Steps to launch Vertex AI Workbench
 * Open Google Cloud Console
 * Search and open 'Vertex AI (Agentic Platform)' page
