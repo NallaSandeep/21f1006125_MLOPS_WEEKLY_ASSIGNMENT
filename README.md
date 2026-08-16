@@ -83,11 +83,13 @@ feature to the training distribution with a two-sample Kolmogorov-Smirnov test:
 python data_drift_detection.py
 ```
 
-The command writes the simulated production data, a CSV drift report, and
-feature-distribution plots to `artifacts/drift/`. A p-value below `0.05` marks
-a feature as drifted. The default simulation should identify `petal_length` as
-drifted; a deployed model may become less reliable when it sees this changed
-feature distribution because it was trained on different input patterns.
+The command splits the input into original training and test sets, shifts
+`petal_length` in a simulated production copy of the test set, and writes the
+production data, drift report, distribution plots, and performance comparison
+to `artifacts/drift/`. A p-value below `0.05` marks a feature as drifted. The
+performance report compares the model on the unchanged test data and the
+labelled simulated production data. A deployed model may become less reliable
+when it sees the changed feature distribution it was not trained on.
 
 ## Steps to launch Vertex AI Workbench
 * Open Google Cloud Console
