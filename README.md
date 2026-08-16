@@ -1,15 +1,15 @@
-# Integrating MLSecOps into the IRIS Pipeline
+# Explainability, Fairness, and Drift in the IRIS Pipeline
 
 ## Overview
-Explore ML security threat vectors, simulate data poisoning attacks on the IRIS dataset at varying severity levels, measure the impact on model performance using MLflow, and reason about mitigation strategies.
+ Introduce a sensitive attribute into the IRIS dataset, detect bias using Fairlearn, explain model decisions with SHAP, and study drift monitoring and governance for production machine learning (ML) systems.
 
 ## Objectives
 
-* Identify the major security threat vectors across the ML pipeline.
-* Simulate data poisoning attacks at varying severity levels on a real dataset.
-* Use MLflow to track and compare the impact of poisoned data on model metrics.
-* Reason about mitigation strategies and data quality requirements in production.
-* Understand the relationship between data quantity and data quality under adversarial conditions.
+* Generate and interpret SHAP summary plots for a multi-class classifier.
+* Use Fairlearn MetricFrame to assess model performance across a sensitive attribute.
+* Distinguish between data drift and concept drift and reason about how to detect each.
+* Explain model decisions in plain language using SHAP outputs.
+* Understand the role of model cards and governance in responsible production deployments.
 
 ## Included Files
 * graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
@@ -38,6 +38,41 @@ For a required clean set size `C` and observed clean ratio `q`, plan to ingest
 at least `ceil(C / q)` records. This is a capacity estimate for randomly
 detected bad rows—not a reason to accept targeted poisoning; systematic
 anomalies must be investigated and removed before training.
+
+## Fairness audit by location
+
+First add a randomly assigned binary sensitive attribute to the Iris data:
+
+```bash
+python add_location_column.py
+```
+
+Then run the Fairlearn `MetricFrame` audit:
+
+```bash
+python fairness_audit.py
+```
+
+The output shows overall accuracy, weighted precision, and weighted recall,
+then the same metrics separately for `location` groups `0` and `1`, followed
+by the maximum difference between groups. Because `location` is random, the
+group metrics should normally be close, though a small test-set difference is
+expected from sampling variation.
+
+## SHAP explanations
+
+Generate full-dataset SHAP summary plots for `setosa`, `versicolor`, and
+`virginica`:
+
+```bash
+python shap_explanations.py
+```
+
+The plots are saved under `artifacts/shap/`. In the Virginica plot, dots on
+the right are evidence that pushes the prediction toward Virginica; dots on
+the left push away. Red dots represent high feature values and blue dots low
+feature values. Therefore, red dots clustered on the right indicate that high
+values of that feature strongly support a Virginica prediction.
 
 ## Steps to launch Vertex AI Workbench
 * Open Google Cloud Console
