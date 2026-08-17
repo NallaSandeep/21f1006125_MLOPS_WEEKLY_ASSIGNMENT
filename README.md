@@ -25,6 +25,18 @@
 * secure_data_pipeline.py - fail-closed Iris ingestion with schema, range,
   duplicate, and class-conditional anomaly checks; it writes quarantined rows
   and a SHA-256 provenance manifest.
+* add_location_column.py - Adds a reproducible, randomly assigned binary
+  `location` column to an Iris CSV file.
+* fairness_audit.py - Trains an Iris decision tree and uses Fairlearn
+  `MetricFrame` to report accuracy, weighted precision, and weighted recall by
+  location group.
+* shap_explanations.py - Fits a full-dataset SHAP explainer and saves one
+  summary plot for each Iris class.
+* data_drift_detection.py - Simulates a production feature shift, uses
+  Evidently to detect drift, and compares baseline versus production model
+  performance.
+* MODEL_CARD.md - Documents the model's purpose, data, performance, fairness,
+  explainability, drift findings, limitations, and monitoring requirements.
 
 ## Secure data ingestion
 
@@ -76,8 +88,8 @@ values of that feature strongly support a Virginica prediction.
 
 ## Data drift detection
 
-Simulate production data by adding `1.0` to `petal_length`, then compare each
-feature to the training distribution with a two-sample Kolmogorov-Smirnov test:
+Simulate production data by adding `1.0` to `petal_length`, then use Evidently
+to compare the unchanged baseline test set with its simulated production copy:
 
 ```bash
 python data_drift_detection.py
