@@ -14,6 +14,20 @@
 ## Included Files
 * graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
 * data folder - Contains different sets of iris data
+  * `iris_v1.jsonl` - A 150-record instruction-tuning dataset derived from the
+    Iris dataset. Each JSON Lines record has compact, labelled numeric flower
+    measurements in `input_text` and the lower-case species label (`setosa`,
+    `versicolor`, or `virginica`) in `output_text`.
+  * `iris_v2.jsonl` - The same 150 Iris examples in a more natural-language
+    prompt-and-response format. Inputs describe measurements in centimetres and
+    ask for the species; outputs are complete responses such as "This is Iris
+    setosa." It is useful for evaluating or fine-tuning a conversational
+    response style.
+* finetune_llm.ipynb - A Kaggle-oriented notebook that authenticates with
+  Hugging Face, loads `google/gemma-3-1b-it`, and demonstrates QLoRA
+  supervised fine-tuning for Iris classification. It loads both JSONL dataset
+  versions, formats `iris_v1.jsonl` as classification prompts, uses 4-bit NF4
+  quantization with LoRA adapters, and configures training on a CUDA GPU.
 * Unit test files
   * test_data_validation.py - Validates the sanity of input data file
   * test_graded_assignment.py - Validates the functionality of functions present in graded_assigment.py
