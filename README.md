@@ -1,15 +1,16 @@
-# Explainability, Fairness, and Drift in the IRIS Pipeline
+# From MLOps to LLMOps: Fine-Tuning Gemini on the IRIS Pipeline
 
 ## Overview
- Introduce a sensitive attribute into the IRIS dataset, detect bias using Fairlearn, explain model decisions with SHAP, and study drift monitoring and governance for production machine learning (ML) systems.
+Understand how MLOps principles evolve for large language models, then apply them by fine-tuning a Gemini model on two representations of the IRIS dataset and comparing the results using evaluation metrics.
 
 ## Objectives
 
-* Generate and interpret SHAP summary plots for a multi-class classifier.
-* Use Fairlearn MetricFrame to assess model performance across a sensitive attribute.
-* Distinguish between data drift and concept drift and reason about how to detect each.
-* Explain model decisions in plain language using SHAP outputs.
-* Understand the role of model cards and governance in responsible production deployments.
+* Understand how MLOps principles adapt for the LLM lifecycle.
+* Convert structured tabular data into LLM-compatible JSONL format in two representations.
+* Fine-tune a Gemini model on Vertex AI using supervised fine-tuning.
+* Apply LLM-appropriate evaluation metrics including exact match and format compliance.
+* Compare model versions and reason about the impact of data representation on LLM performance.
+
 
 ## Included Files
 * graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
