@@ -49,7 +49,9 @@ def model_predict(prompt: str, version: str) -> str:
     # produces base-model-style completions instead of task answers.
     if tokenizer.chat_template:
         inputs = tokenizer.apply_chat_template(
-            [{"role": "user", "content": prompt}],
+            # Match Vertex OSS tuning data exactly: Gemma's multimodal chat
+            # template receives a typed text-content list, not a bare string.
+            [{"role": "user", "content": [{"type": "text", "text": prompt}]}],
             add_generation_prompt=True,
             return_tensors="pt",
             return_dict=True,
