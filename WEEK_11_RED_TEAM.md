@@ -60,9 +60,11 @@ Use `raw_predict` for the before/after evaluator and `predict` when demonstratin
 
 The wrapper logs each blocked input with an ISO-8601 UTC timestamp, matching rule, and raw input in `artifacts/guardrails/audit.jsonl`. It then scans returned text for system/context/training fragments and for strict output compliance. Leaks and malformed answers are replaced by a standard fallback, and logged with the timestamp, reason, and raw response.
 
+Both deployed versions use the canonical public output format `setosa`, `versicolor`, or `virginica` (one lower-case word, with no punctuation). The Workbench system instruction asks for that contract and the output guardrail enforces it. This intentionally normalizes the conversational v2 fine-tuning target at inference time.
+
 ## Metrics and screencast checklist
 
-`evaluate_guardrails.py` regenerates the ten adversarial tests through the guarded path and sends every record in `data/iris_test.csv` through the same path. It writes per-version attack tables and `guardrail_metrics.json`, containing:
+`evaluate_guardrails.py` regenerates the ten adversarial tests through the guarded path and uses the original Week 10 deterministic 60/40 stratified split (`random_state=42`) to send its 60-row held-out partition through the same path. It writes per-version attack tables and `guardrail_metrics.json`, containing:
 
 | Metric | Calculation |
 | --- | --- |

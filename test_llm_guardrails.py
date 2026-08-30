@@ -18,9 +18,9 @@ def test_rule_and_schema_blocks_are_logged(tmp_path):
 
 
 def test_valid_inputs_reach_model_and_keep_expected_format(tmp_path):
-    pipeline = GuardedIrisPipeline(lambda prompt, version: "setosa" if version == "v1" else "This is Iris setosa.", tmp_path / "audit.jsonl")
+    pipeline = GuardedIrisPipeline(lambda prompt, version: "setosa", tmp_path / "audit.jsonl")
     assert pipeline.predict(V1, "v1") == {"blocked": False, "response": "setosa"}
-    assert pipeline.predict(V2, "v2") == {"blocked": False, "response": "This is Iris setosa."}
+    assert pipeline.predict(V2, "v2") == {"blocked": False, "response": "setosa"}
     assert pipeline.predict(json.dumps({"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}), "v1")["blocked"] is False
 
 

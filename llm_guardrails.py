@@ -39,10 +39,11 @@ V2_SCHEMA = re.compile(
     r"and petal width of [-+]?\d+(?:\.\d+)? cm\. Identify the iris species\.\s*$",
     re.I,
 )
-OUTPUT_FORMATS = {
-    "v1": re.compile(r"^\s*(?:iris[- ]?)?(setosa|versicolor|virginica)\s*\.?\s*$", re.I),
-    "v2": re.compile(r"^\s*This is Iris (setosa|versicolor|virginica)\.\s*$", re.I),
-}
+# Both deployments expose one canonical public contract, even though the v2
+# training targets were conversational sentences. A single label removes
+# ambiguity and makes output enforcement deterministic.
+CANONICAL_SPECIES_OUTPUT = re.compile(r"^\s*(setosa|versicolor|virginica)\s*$", re.I)
+OUTPUT_FORMATS = {"v1": CANONICAL_SPECIES_OUTPUT, "v2": CANONICAL_SPECIES_OUTPUT}
 LEAKAGE_MARKERS = re.compile(
     r"\b(system prompt|context window|few[- ]?shot|training examples?|"
     r"Classify the following Iris flower|sepal_length:|output_text|input_text|"

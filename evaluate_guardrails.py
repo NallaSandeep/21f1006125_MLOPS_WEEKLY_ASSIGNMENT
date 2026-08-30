@@ -8,6 +8,8 @@ import os
 import re
 from pathlib import Path
 
+from sklearn.model_selection import train_test_split
+
 from llm_guardrails import GuardedIrisPipeline, SPECIES
 from red_team_evaluation import INJECTION_CASES, LEAKAGE_CASES, endpoint_predictor
 
@@ -28,7 +30,7 @@ def rate(numerator: int, denominator: int) -> float:
     return round(numerator / denominator, 4) if denominator else 0.0
 
 
-def evaluate(predict_fn, test_csv: str, output_dir: str | Path) -> dict[str, object]:
+def evaluate(predict_fn, test_csv: str, output_dir: str | Path, use_week10_split: bool = True) -> dict[str, object]:
     guarded = GuardedIrisPipeline(predict_fn, Path(output_dir) / "audit.jsonl")
     result: dict[str, object] = {"by_version": {}}
     for version in ("v1", "v2"):
@@ -41,16 +43,25 @@ def evaluate(predict_fn, test_csv: str, output_dir: str | Path) -> dict[str, obj
                                     "model_version": version, "raw_response_before": baseline,
                                     "guarded_response": protected.get("response", ""),
                                     "blocked": protected["blocked"], "reason": protected.get("reason", "")})
-        clean_rows = []
-        # ``utf-8-sig`` transparently removes a BOM sometimes added by Excel
-        # or Cloud Storage exports, avoiding a hidden ``\ufeffsepal_length`` key.
         with open(test_csv, newline="", encoding="utf-8-sig") as handle:
-            for row in csv.DictReader(handle):
-                raw = prompt_for(row, version)
-                before = predict_fn(raw, version)
-                after = guarded.predict(raw, version)
-                clean_rows.append({"expected": row["species"], "before": before,
-                                   "after": after.get("response", ""), "blocked": after["blocked"]})
+            source_rows = list(csv.DictReader(handle))
+        # Week 10's split_data uses a deterministic 60/40 stratified split.
+        # The 60-row test partition is the relevant held-out set, not all 150
+        # rows in iris_test.csv.
+        if use_week10_split:
+            _, source_rows = train_test_split(
+                source_rows,
+                test_size=0.4,
+                stratify=[row["species"] for row in source_rows],
+                random_state=42,
+            )
+        clean_rows = []
+        for row in source_rows:
+            raw = prompt_for(row, version)
+            before = predict_fn(raw, version)
+            after = guarded.predict(raw, version)
+            clean_rows.append({"expected": row["species"], "before": before,
+                               "after": after.get("response", ""), "blocked": after["blocked"]})
         injection = [row for row in attack_rows if row["suite"] == "injection"]
         leakage = [row for row in attack_rows if row["suite"] == "leakage"]
         baseline_accuracy = rate(sum(label(row["before"]) == row["expected"] for row in clean_rows), len(clean_rows))
@@ -79,10 +90,11 @@ def main() -> None:
     parser.add_argument("--transport", choices=("vertex", "local"), default="vertex")
     parser.add_argument("--test-csv", default="data/iris_test.csv")
     parser.add_argument("--output-dir", default="artifacts/red_team")
+    parser.add_argument("--full-dataset", action="store_true", help="Use all rows instead of the Week 10 60-row held-out split.")
     args = parser.parse_args()
     if not args.endpoint_v1 or not args.endpoint_v2:
         parser.error("Supply both endpoint URLs via flags or V1_ENDPOINT_URL/V2_ENDPOINT_URL.")
-    metrics = evaluate(endpoint_predictor({"v1": args.endpoint_v1, "v2": args.endpoint_v2}, args.request_key, args.transport), args.test_csv, args.output_dir)
+    metrics = evaluate(endpoint_predictor({"v1": args.endpoint_v1, "v2": args.endpoint_v2}, args.request_key, args.transport), args.test_csv, args.output_dir, not args.full_dataset)
     print(json.dumps(metrics, indent=2))
 
 
