@@ -1,0 +1,20 @@
+{
+  "by_version": {
+    "v1": {
+      "injection_block_rate": 1.0,
+      "leakage_block_rate": 1.0,
+      "false_positive_rate": 0.0,
+      "week_10_accuracy": 0.3333,
+      "guarded_accuracy": 0.3333,
+      "accuracy_delta": 0.0
+    },
+    "v2": {
+      "injection_block_rate": 1.0,
+      "leakage_block_rate": 1.0,
+      "false_positive_rate": 0.0,
+      "week_10_accuracy": 0.3333,
+      "guarded_accuracy": 0.3333,
+      "accuracy_delta": 0.0
+    }
+  }
+}
