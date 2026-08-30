@@ -48,10 +48,17 @@ def model_predict(prompt: str, version: str) -> str:
     # template. Supplying ordinary plain text omits its turn delimiters and
     # produces base-model-style completions instead of task answers.
     if tokenizer.chat_template:
+        output_contract = (
+            "Respond with exactly one lowercase Iris species label: setosa, "
+            "versicolor, or virginica. Output no other words or punctuation."
+        )
         inputs = tokenizer.apply_chat_template(
-            # Match Vertex OSS tuning data exactly: Gemma's multimodal chat
-            # template receives a typed text-content list, not a bare string.
-            [{"role": "user", "content": [{"type": "text", "text": prompt}]}],
+            [
+                {"role": "system", "content": [{"type": "text", "text": output_contract}]},
+                # Match Vertex OSS tuning data exactly: Gemma's multimodal chat
+                # template receives a typed text-content list, not a bare string.
+                {"role": "user", "content": [{"type": "text", "text": prompt}]},
+            ],
             add_generation_prompt=True,
             return_tensors="pt",
             return_dict=True,
