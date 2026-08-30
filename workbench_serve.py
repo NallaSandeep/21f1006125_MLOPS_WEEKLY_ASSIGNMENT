@@ -44,10 +44,18 @@ def load_model(model_path: str) -> tuple[AutoTokenizer, AutoModelForCausalLM]:
 
 def model_predict(prompt: str, version: str) -> str:
     tokenizer, model = models[version]
-    # Match the prompt prefix used by the checked-in v1 fine-tuning notebook.
-    prefix = "Classify the following Iris flower.\n\n"
-    suffix = "\n\nSpecies:"
-    inputs = tokenizer(prefix + prompt + suffix, return_tensors="pt").to(model.device)
+    # Vertex managed OSS fine-tuning retains the Gemma instruction/chat
+    # template. Supplying ordinary plain text omits its turn delimiters and
+    # produces base-model-style completions instead of task answers.
+    if tokenizer.chat_template:
+        inputs = tokenizer.apply_chat_template(
+            [{"role": "user", "content": prompt}],
+            add_generation_prompt=True,
+            return_tensors="pt",
+            return_dict=True,
+        ).to(model.device)
+    else:
+        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     with torch.inference_mode():
         generated = model.generate(**inputs, max_new_tokens=16, do_sample=False, pad_token_id=tokenizer.eos_token_id)
     return tokenizer.decode(generated[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True).strip()

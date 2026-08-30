@@ -42,7 +42,9 @@ def evaluate(predict_fn, test_csv: str, output_dir: str | Path) -> dict[str, obj
                                     "guarded_response": protected.get("response", ""),
                                     "blocked": protected["blocked"], "reason": protected.get("reason", "")})
         clean_rows = []
-        with open(test_csv, newline="", encoding="utf-8") as handle:
+        # ``utf-8-sig`` transparently removes a BOM sometimes added by Excel
+        # or Cloud Storage exports, avoiding a hidden ``\ufeffsepal_length`` key.
+        with open(test_csv, newline="", encoding="utf-8-sig") as handle:
             for row in csv.DictReader(handle):
                 raw = prompt_for(row, version)
                 before = predict_fn(raw, version)
