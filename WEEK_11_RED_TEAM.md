@@ -17,7 +17,7 @@ If the endpoint expects a name other than `prompt` inside its `instances` payloa
 
 ## Running your fine-tuned adapters in Vertex AI Workbench
 
-The checked-in fine-tuning notebook saves PEFT/LoRA adapters, so upload **each complete adapter directory** (including `adapter_config.json`, adapter weights, and tokenizer files) to a separate Cloud Storage prefix. From a local terminal, for example:
+The checked-in notebook saves PEFT/LoRA adapters, while Vertex managed OSS fine-tuning may export a complete model (`config.json` and `model.safetensors`). Upload **each complete output directory** to a separate Cloud Storage prefix. The service detects either format automatically. From a local terminal, for example:
 
 ```powershell
 gcloud storage cp --recursive PATH_TO_V1_FINAL_ADAPTER gs://YOUR_BUCKET/iris-adapters/v1

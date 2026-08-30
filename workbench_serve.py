@@ -19,19 +19,25 @@ from llm_guardrails import GuardedIrisPipeline
 BASE_MODEL = os.getenv("BASE_MODEL", "google/gemma-3-1b-it")
 ADAPTER_PATHS = {"v1": os.getenv("V1_ADAPTER_DIR", "models/v1_adapter"),
                  "v2": os.getenv("V2_ADAPTER_DIR", "models/v2_adapter")}
-models: dict[str, tuple[AutoTokenizer, PeftModel]] = {}
+models: dict[str, tuple[AutoTokenizer, AutoModelForCausalLM]] = {}
 
 
-def load_adapter(adapter_path: str) -> tuple[AutoTokenizer, PeftModel]:
-    tokenizer = AutoTokenizer.from_pretrained(adapter_path)
+def load_model(model_path: str) -> tuple[AutoTokenizer, AutoModelForCausalLM]:
+    """Load either a full fine-tuned model or a PEFT adapter folder."""
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    base = AutoModelForCausalLM.from_pretrained(
-        BASE_MODEL,
-        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-        device_map="auto" if torch.cuda.is_available() else None,
-    )
-    model = PeftModel.from_pretrained(base, adapter_path)
+    load_options = {
+        "torch_dtype": torch.float16 if torch.cuda.is_available() else torch.float32,
+        "device_map": "auto" if torch.cuda.is_available() else None,
+    }
+    if os.path.isfile(os.path.join(model_path, "adapter_config.json")):
+        base = AutoModelForCausalLM.from_pretrained(BASE_MODEL, **load_options)
+        model = PeftModel.from_pretrained(base, model_path)
+    else:
+        # Vertex managed OSS fine-tuning exports this form: config.json plus
+        # model.safetensors. It is already a complete model, not an adapter.
+        model = AutoModelForCausalLM.from_pretrained(model_path, **load_options)
     model.eval()
     return tokenizer, model
 
@@ -52,7 +58,7 @@ async def lifespan(_: FastAPI):
     for version, adapter_path in ADAPTER_PATHS.items():
         if not os.path.isdir(adapter_path):
             raise RuntimeError(f"{version} adapter folder is missing: {adapter_path}")
-        models[version] = load_adapter(adapter_path)
+        models[version] = load_model(adapter_path)
     yield
     models.clear()
 
