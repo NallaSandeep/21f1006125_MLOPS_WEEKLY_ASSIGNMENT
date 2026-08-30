@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+torch
+transformers==4.57.3
+peft
+accelerate
+safetensors
