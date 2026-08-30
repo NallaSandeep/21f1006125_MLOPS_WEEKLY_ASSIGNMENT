@@ -54,10 +54,8 @@ def model_predict(prompt: str, version: str) -> str:
         )
         inputs = tokenizer.apply_chat_template(
             [
-                {"role": "system", "content": [{"type": "text", "text": output_contract}]},
-                # Match Vertex OSS tuning data exactly: Gemma's multimodal chat
-                # template receives a typed text-content list, not a bare string.
-                {"role": "user", "content": [{"type": "text", "text": prompt}]},
+                {"role": "system", "content": output_contract},
+                {"role": "user", "content": prompt},
             ],
             add_generation_prompt=True,
             return_tensors="pt",
