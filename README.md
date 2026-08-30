@@ -1,16 +1,14 @@
-# From MLOps to LLMOps: Fine-Tuning Gemini on the IRIS Pipeline
+# Governing the Fine-Tuned LLM Guardrails on the IRIS Pipeline
 
 ## Overview
-Understand how MLOps principles evolve for large language models, then apply them by fine-tuning a Gemini model on two representations of the IRIS dataset and comparing the results using evaluation metrics.
+Evaluate fine-tuned Gemini/Gemma pipeline against LLM-specific governance risks, such as prompt injection and prompt leakage. Then, implement input and output guardrails to defend against them and measure their effectiveness.
 
 ## Objectives
 
-* Understand how MLOps principles adapt for the LLM lifecycle.
-* Convert structured tabular data into LLM-compatible JSONL format in two representations.
-* Fine-tune a Gemini model on Vertex AI using supervised fine-tuning.
-* Apply LLM-appropriate evaluation metrics including exact match and format compliance.
-* Compare model versions and reason about the impact of data representation on LLM performance.
-
+* Design and execute a structured red-team evaluation against a fine-tuned LLM pipeline, documenting successful attack patterns.
+* Implement input guardrails that detect and block adversarial prompts before they reach the model.
+* Implement output guardrails that scan model responses for sensitive context leakage and filter non-compliant outputs.
+* Measure guardrail effectiveness using block rate and false positive rate, and reason about the trade-off between security and usability.
 
 ## Included Files
 * graded_assignment.py - Load data, splits the data to train and test, builds the model using train data, upload the model to mlflow model registry, validates the model using test data
@@ -29,6 +27,24 @@ Understand how MLOps principles evolve for large language models, then apply the
   supervised fine-tuning for Iris classification. It loads both JSONL dataset
   versions, formats `iris_v1.jsonl` as classification prompts, uses 4-bit NF4
   quantization with LoRA adapters, and configures training on a CUDA GPU.
+* `llm_guardrails.py` - Fail-closed input and output guardrail wrapper for
+  the v1/v2 LLM classifiers. It blocks injection patterns and invalid Iris
+  schemas, filters leakage and output-format violations, and writes JSONL
+  audit events.
+* `workbench_serve.py` - FastAPI service for running v1 and v2 fine-tuned
+  Gemma models on Vertex AI Workbench. It supports either complete model
+  exports (`config.json` and `model.safetensors`) or PEFT adapters.
+* `requirements-llm.txt` - Python dependencies for the Workbench Gemma
+  inference service.
+* `red_team_evaluation.py` - Executes five prompt-injection and five prompt-
+  leakage probes against both model versions and writes raw response evidence.
+* `evaluate_guardrails.py` - Measures guarded attack block rates, false
+  positives, and guarded-versus-baseline accuracy on the deterministic Week
+  10 held-out Iris split.
+* `test_llm_guardrails.py` - Unit tests for input blocking, output filtering,
+  audit logging, and valid-input pass-through behavior.
+* `WEEK_11_RED_TEAM.md` - Week 11 runbook, red-team methodology, metrics, and
+  screencast checklist.
 * Unit test files
   * test_data_validation.py - Validates the sanity of input data file
   * test_graded_assignment.py - Validates the functionality of functions present in graded_assigment.py
@@ -52,6 +68,55 @@ Understand how MLOps principles evolve for large language models, then apply the
   performance.
 * MODEL_CARD.md - Documents the model's purpose, data, performance, fairness,
   explainability, drift findings, limitations, and monitoring requirements.
+
+## Week 11: LLM red-team guardrails
+
+The Week 11 implementation applies a fail-closed pipeline:
+
+```text
+raw prompt -> input guardrail -> model -> output guardrail -> safe response
+```
+
+The input layer detects known prompt-injection and context-exfiltration
+patterns, and only accepts the expected v1 or v2 Iris input schema. The output
+layer permits only the canonical species labels `setosa`, `versicolor`, and
+`virginica`; it replaces leakage or malformed output with a standard fallback.
+All blocked or filtered events are written to `artifacts/guardrails/audit.jsonl`.
+
+For local Vertex AI Workbench inference, copy the two model exports locally,
+set `V1_ADAPTER_DIR` and `V2_ADAPTER_DIR`, and start the service:
+
+```bash
+pip install -r requirements-llm.txt
+export V1_ADAPTER_DIR=/path/to/v1-model
+export V2_ADAPTER_DIR=/path/to/v2-model
+uvicorn workbench_serve:app --host 0.0.0.0 --port 8000
+```
+
+Check that both models are available:
+
+```bash
+curl -s http://127.0.0.1:8000/health
+```
+
+Run the unguarded red-team baseline and guarded metrics against the local-only
+baseline endpoints:
+
+```bash
+python red_team_evaluation.py \
+  --endpoint-v1 http://127.0.0.1:8000/v1/raw_predict \
+  --endpoint-v2 http://127.0.0.1:8000/v2/raw_predict \
+  --transport local
+
+python evaluate_guardrails.py \
+  --endpoint-v1 http://127.0.0.1:8000/v1/raw_predict \
+  --endpoint-v2 http://127.0.0.1:8000/v2/raw_predict \
+  --transport local
+```
+
+Use `/v1/predict` and `/v2/predict` for guarded requests. The `raw_predict`
+routes exist only to measure the pre-guardrail baseline on a private Workbench
+instance and must not be exposed publicly.
 
 ## Secure data ingestion
 
